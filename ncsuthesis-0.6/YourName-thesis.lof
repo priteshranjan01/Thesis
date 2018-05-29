@@ -1,0 +1,31 @@
+\boolfalse {citerequest}\boolfalse {citetracker}\boolfalse {pagetracker}\boolfalse {backtracker}\relax 
+\defcounter {refsection}{0}\relax 
+\addvspace {10\p@ }
+\defcounter {refsection}{0}\relax 
+\addvspace {10\p@ }
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {2.1}{\ignorespaces Here is a sample figure\relax }}{7}{figure.caption.9}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Here is a HUGE sample figure with a HUGE caption. Our goal is to make a caption that is so long that the caption spills into the lower margin, leading to an ETD error. The way to solve this problem in a systematic way is to calculate how many lines of text the caption will use, then adjust the size of the image, such that it leaves just enough space for your huge caption. How I am solving this problem is by providing a new variable called graphht that stores how tall the image should be. Then, to calculate how tall to make the figure, you use the new function that I am providing called calculategraphicstargetheight. This function has one argument. The argument of the function is how many lines of text you estimate that the caption occupies. You can always run your tex once, measure this number, and type it into the argument for the function. What the function will do (it is defined in the preamble) is take into account the size you give it, the spacing of the chapter and the footer at the bottom, and then calculate the total vertical space available. Thus, this function should be used for images that are taller than they are wide.\relax }}{8}{figure.caption.10}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {2.3}{\ignorespaces Here is a sample figure\relax }}{9}{figure.caption.11}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {2.4}{\ignorespaces Here are two floating subfigures\relax }}{9}{figure.caption.12}
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(a)}{\ignorespaces {}}}{9}{subfigure.4.1}
+\defcounter {refsection}{0}\relax 
+\contentsline {subfigure}{\numberline {(b)}{\ignorespaces {}}}{9}{subfigure.4.2}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {2.5}{\ignorespaces This figure has been turned sideways. With large figures, the author must ensure that there are at least two double spaces between the caption and the page number.\relax }}{11}{figure.caption.13}
+\defcounter {refsection}{0}\relax 
+\addvspace {10\p@ }
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {3.1}{\ignorespaces A figure at the top of the page.\relax }}{15}{figure.caption.14}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {3.2}{\ignorespaces A figure in the middle of text.\relax }}{16}{figure.caption.15}
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {3.3}{\ignorespaces A figure at the bottom of the page.\relax }}{17}{figure.caption.16}
+\defcounter {refsection}{0}\relax 
+\addvspace {10\p@ }
+\defcounter {refsection}{0}\relax 
+\contentsline {figure}{\numberline {A.1}{\ignorespaces A figure in the appendix.\relax }}{23}{figure.caption.19}
