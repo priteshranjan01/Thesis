@@ -1,6 +1,6 @@
-\documentclass[11pt,          % font size: 11pt or 12pt
-               phd,           % degree:    ms or phd
-               onehalfspacing % spacing: onehalfspacing or doublespacing
+\documentclass[12pt,          % font size: 11pt or 12pt
+               ms,           % degree:    ms or phd
+               doublespacing % spacing: onehalfspacing or doublespacing
                ]{ncsuthesis}
 
 %%----------------------------------------------------------------------------%%
@@ -39,7 +39,7 @@
 %%%%%%%%%%% Hack for alphanumeric bibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 \RequirePackage[
-			style=alphabetic,%numeric-comp,%authoryear-comp,%
+			style=numeric-comp,%alphabetic,%numeric-comp,%authoryear-comp,%
 			sorting=nyt,%ynt					
 			hyperref=true, %	
 			firstinits=true,%
@@ -97,9 +97,9 @@
 
 %\addbibresource{Ortiz-thesis2.bib}
 %\addbibresource{Ortiz-thesisURL.bib}
-\addbibresource{YourName-thesis.bib}
+\addbibresource{PriteshRanjanThesis.bib}
 
- \defbibheading{myheading}[BIBLIOGRAPHY]{
+ \defbibheading{myheading}[REFERENCES]{
  \chapter*{#1}
  %\centerline{\bf{#1}}
  \markboth{#1}{#1}}
@@ -183,7 +183,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %http://ctan.org/pkg/placeins
 \usepackage{placeins}
-%De­fines a \FloatBar­rier com­mand, be­yond which floats may not pass; use­ful, for ex­am­ple, to en­sure all floats for a sec­tion ap­pear be­fore the next \sec­tion com­mand.
+%Defines a \FloatBarrier command, beyond which floats may not pass; useful, for example, to ensure all floats for a section appear before the next \section command.
 
 %%%Hack for centering all figures
 %\makeatletter
@@ -237,7 +237,7 @@
 %%---------------------------- Content Options -------------------------------%%
 %%----------------------------------------------------------------------------%%
 %% Size of committee: 3, 4, 5, or 6 -- this number includes the chair
-\committeesize{4}
+\committeesize{3}
 
 %% Members of committee
 %%  Each of the following member commands takes an optional argument
@@ -246,20 +246,17 @@
 %%      \cochairI{Doug Dodd}
 %%      \cochairII{Chris Cox}
 %%
-\chair{Doug Dodd}
-\memberI{Alex Anderson}
-\memberII{Bobby Brown}
-\memberIII{Chris Cox}   % unnecessary if committeesize=3
-\memberIV{Fred Ford}    % unnecessary if committeesize=3 or 4
-\memberV{Edna Everitt}  % unnecessary if committeesize=3, 4, or 5
+\chair{Dr. Rudra Dutta}
+\memberI{Dr. Muhammad Shahzad}
+\memberII{Dr. Mihail Sichitiu}
 
 
 %% Student writing thesis, \student{First Middle}{Last}
-\student{John Mark}{Smith} % a full middle name
+\student{Pritesh}{Ranjan} % a full middle name
 %\student{John M.}{Smith} % a middle initial
 
 %% Degree program
-\program{Physics}
+\program{Computer Science}
 
 %% Thesis Title
 %%  Keep in mind, according to ETD guidelines:
@@ -269,8 +266,7 @@
 %%  Note: To break the title onto multiple lines, use \break instead of \\.
 %\thesistitle{A North Carolina State University Sample \LaTeX{} Thesis \break 
 %with a Title So Long it Needs a Line Break}
-\thesistitle{A North Carolina State University Sample \LaTeX{} Thesis \break 
-with a Title So Long it Needs a Line Break}
+\thesistitle{Thesis Tile : TODO}
 
 %% Degree year.  Necessary if your degree year doesn't equal the current year.
 %\degreeyear{1995}
@@ -325,21 +321,6 @@ with a Title So Long it Needs a Line Break}
 
 %\renewcommand{\cfttoctitlefont}{\centering\ncsu@headingformat}
 
-%landscape support in fancyhdr from http://tex.stackexchange.com/questions/9071/how-to-translate-and-rotate-the-heading-of-landscaped-pages
-\usepackage[absolute]{textpos}
-\fancypagestyle{lscape}{% 
-\fancyhf{} % clear all header and footer fields 
-\fancyfoot[LE]{%
-\begin{textblock}{20}(1,5){\rotatebox{90}{\leftmark}}\end{textblock}
-\begin{textblock}{1}(13,10.5){\rotatebox{90}{\thepage}}\end{textblock}}
-\fancyfoot[LO] {%
-\begin{textblock}{1}(13,10.5){\rotatebox{90}{\thepage}}\end{textblock}
-\begin{textblock}{20}(1,13.25){\rotatebox{90}{\rightmark}}\end{textblock}}
-%\renewcommand{\headrulewidth}{0pt} 
-%\renewcommand{\footrulewidth}{0pt}
-}
-
-
 
 %http://tex.stackexchange.com/questions/47184/height-of-figure-caption-textheight
 \newlength\graphht
@@ -352,6 +333,8 @@ with a Title So Long it Needs a Line Break}
                        }}
 
 %\usepackage{titlesec}
+
+%landscape support in fancyhdr from http://tex.stackexchange.com/questions/9071/how-to-translate-and-rotate-the-heading-of-landscaped-pages
 \usepackage{pdflscape}
 \usepackage{tikz}
 \fancypagestyle{lscapedplain}{%
@@ -389,21 +372,6 @@ with a Title So Long it Needs a Line Break}
 
 %%---------------------------------------------------------------------------%%
 %%  Bibliography 
-
-%%  You can use the bibitem list.
-%\bibliographystyle{unsrt}
-%\begin{%thebibliography}{99}
-%\bibitem{cb02}
-%Casella, G. and Berger, R.L. (2002)
-%\newblock {\it Statistical Inference, Second Edition.}
-%Duxbury Press, Belmont, CA.
-%
-%\bibitem{t06}
-%Tsiatis, A.A. (2006)
-%\newblock {\it Semiparametric Theory and Missing Data.}
-%Springer, New York.
-%
-%\end{thebibliography}
 
 %% or use BibTeX
 %\bibliography{Ortiz-thesis}{}

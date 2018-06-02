@@ -1,7 +1,16 @@
 %% ------------------------------ Abstract ---------------------------------- %%
 \begin{abstract}
 
-\lipsum[1-6]
+In recent years, producing small or mini UAVs at a low cost has become efficient thanks to the advances in sensors, communication, and embedded systems. Moreover, for many missions, employing multiple small-UAVs can be advantageous compared to a single large UAV. A few examples of such missions would be border surveillance, disaster monitoring, search and rescue operations, plume tracking etc. 
+
+
+However, an autonomously operating multi-UAV system has its own set of challenges; for example, the UAVs should avoid colliding with an obstacle or into each other while also staying in contact with the group. A reliable communication network among the cooperating UAVs is critical to the success of a mission and is the most prominent problem as well. 
+
+
+An inter UAV ad-hoc network is the most suitable option for enabling communication among the UAVs. However traditional destination IP based routing protocols impose high overhead in mobile ad-hoc networks due to node mobility which leads to frequent topology changes. Geographic routing or position-based routing protocols which take the aid of geographic locations of nodes have been demonstrated to scale better for mobile ad-hoc networks. However, most of these protocols have been designed with 2-dimensional networks in mind. Moreover, some of these protocols use planar sub-graph to guarantee delivery, which is not applicable in 3D networks as the concepts key to planar sub-graph do not exist in non-planar topology.
+
+
+In this thesis, we study some geographical routing protocols and propose an extended version of our past work on geographic routing. Our proposed protocol enhances reliability by routing packets through multiple geo-diffused paths while minimizing the overhead by limiting the flooding to a specific region. We demonstrate the feasibility of our protocol among a group of quadrotor drones in Qrsim simulator working on plume wrapping problem. We have also presented statistical data on the performance evaluation of our protocol on metrics like end-to-end delay, transmission overhead, average number of hops and delivery ratio.
 
 
 \end{abstract}
