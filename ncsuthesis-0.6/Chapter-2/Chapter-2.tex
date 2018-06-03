@@ -3,7 +3,7 @@
 
 \section{Flying Ad-hoc networks (FANETs)}
 
-A wireless ad hoc network is a decentralized network of nodes where there is no specialized equipment like routers/switches/access points to facilitate communication, and the communication medium uses wireless protocols e.g. IEEE 802.11. Since there is no need to set-up any special infrastructure the network can be spun up quickly. Generally, nodes are mobile (hence termed as Mobile ad-hoc network – MANET) and depending on use-cases, node type or node mobility they are further classified as Vehicular ad hoc networks (VANETs) or Flying ad hoc networks (FANETs) or Smart-phone ad hoc networks (SPANs).
+A wireless ad hoc network is a decentralized network of nodes where there is no specialized equipment like routers/switches/access points to facilitate communication, and the communication medium uses wireless protocols e.g. IEEE 802.11. Since there is no need to set-up any special infrastructure the network can be spun up quickly. Generally, nodes are mobile (hence termed as Mobile ad-hoc network - MANET) and depending on use-cases, node type or node mobility they are further classified as Vehicular ad hoc networks (VANETs) or Flying ad hoc networks (FANETs) or Smart-phone ad hoc networks (SPANs).
 
 Flying ad hoc networks are a subset of MANETs and consist of nodes capable of flight. The nodes have high degree of mobility, and the distance between the FANET nodes is larger as compared to MANET nodes. These nodes can be manned airplanes, unmanned guided drones or unmanned unguided drones. The span of the network also varies from few hundred meters to several kilometers. One important distinction about FANETs is that the participating nodes have a common mission and their mobility model depends on the mission \cite{OUBBATI201729}. In this section, we discuss the different characteristics, applications, advantages and challenges of FANETs.
 
@@ -35,7 +35,7 @@ Energy Autonomy & Restricted (Battery Dependent) & Not Restricted (On-board sola
 
 \paragraph{FANET Applications}
 FANETs applications can be grouped into three categories based on the entities in the network and cooperation model among them \cite{BEKMEZCI20131254}.
-\textbf{Multi-UAV cooperation:} Certain tasks require the UAVs to autonomously complete the mission in a time limit without human interaction. In such applications, there is no awareness of the ground environment and thereby doesn’t need any ground infrastructure. The UAVs cooperate and coordinate according to the predetermined application and correct the flight path in response to the environmental factors and errors. Example applications would include plume wrapping, target detection, monitoring disasters etc.
+\textbf{Multi-UAV cooperation:} Certain tasks require the UAVs to autonomously complete the mission in a time limit without human interaction. In such applications, there is no awareness of the ground environment and thereby doesn't need any ground infrastructure. The UAVs cooperate and coordinate according to the predetermined application and correct the flight path in response to the environmental factors and errors. Example applications would include plume wrapping, target detection, monitoring disasters etc.
 \textbf{UAV-to-ground collaboration:} In certain applications, the UAVs need to periodically relay data to a ground location so that it can be acted upon in real time. Such applications require ground infrastructure which can be either mobile or fixed. Examples include search and rescue missions, military monitoring etc.
 \textbf{UAV-to-VANET collaboration:} In the third kind, the aerial UAVs can communicate and coordinate with vehicles on the ground to accomplice certain tasks. Such applications may require ground infrastructure and human involvement. This type of hybrid ad hoc network is a relatively new kind of wireless communication. Examples include route guidance, traffic monitoring, data packet delivery etc.
 
@@ -63,22 +63,46 @@ Human Operator & No & Yes & Maybe \\
 \end{tabular}
 \end{table}
 
-\section{Routing in Ad-hoc Networks}
+\section{Routing in 2 dimensional ad hoc networks}
 
 In a multi-UAV system all the nodes might not be in the direct transmission range of each other, hence routing techniques are needed for successful communication between distant nodes. Due to node mobility and wireless medium, routing in MANETs is a challenging task which further exacerbates in case of FANETs. This happens due to higher mobility and more degrees of freedom. 
 The common MANET routing protocols are generally grouped into two broad groups, namely, topology-based and position-based routing \cite{6238283}. In this section, we will discuss some examples of these protocols and their properties.
 
-\subsection{Topology-based routing protocols:}
+\subsection{Topology-based routing protocols}
 These approaches are like destination IP address-based routing. Topology-based routing protocols maintain a network graph and a path for each destination. The network graph creation can be further classified as proactive, reactive and hybrid approaches. 
 \textbf{Proactive approach:} In this routing approach, a node maintains the path to each node in the network through periodic updates to other nodes. Since the path is already known the packets can be immediately forwarded towards the destination. The downside is that due to high mobility the link information becomes stale quickly which leads to routing failure. The overhead of maintaining a dynamic network makes this approach difficult to scale.
-\textbf{Reactive approach:} In this routing approach, a node initiates path discovery when it needs to reach a destination. The node sends out route discovery request messages to other nodes (the node might keep the route information for future use) as needed. 
-\textbf{Hybrid approach:} In hybrid approaches, the network is divided into zones. For intra-zone communications proactive approach is adopted while for inter-zone communications a reactive approach is adopted. 
+\textbf{Reactive approach} In this routing approach, a node initiates path discovery when it needs to reach a destination. The node sends out route discovery request messages to other nodes (the node might keep the route information for future use) as needed. 
+\textbf{Hybrid approach} In hybrid approaches, the network is divided into zones. For intra-zone communications proactive approach is adopted while for inter-zone communications a reactive approach is adopted. 
 While topology-based approaches guarantee packet delivery if the destination is reachable, they have a high maintenance cost in terms of memory and communication overhead. Moreover, topology-based approaches are more suitable for relatively static networks compared to MANETs.
 
-\subsection{Position-based routing protocols:}
-These approaches route packets based on the geographic position of the destination. In highly dynamic networks, position-based routing approaches have been experimentally confirmed to be more scalable than those which don’t use geographic information \cite{Stojmenovic:2002:PRA:2288474.2290160}. Geographic routing approaches don’t need to share and store link information – rather just the immediate radio neighbors – and thereby make routing decisions on a hop-by-hop basis. Whereas, position-based routing requires the nodes to know their own location, which can be obtained by a location system such a GPS. The accuracy of a GPS might not be enough for multi-UAV systems which are highly mobile at high speed. Moreover, GPS provides location updates every second which might not be sufficient for several multi-UAV missions. To overcome this issue, the nodes can be equipped with Inertial measurement units, which can be calibrated by GPS signals.
+\subsection{Position-based routing protocols}
+These approaches route packets based on the geographic position of the destination. In highly dynamic networks, position-based routing approaches have been experimentally confirmed to be more scalable than those which don't use geographic information \cite{Stojmenovic:2002:PRA:2288474.2290160}. Geographic routing approaches don't need to share and store link information – rather just the immediate radio neighbors - and thereby make routing decisions on a hop-by-hop basis. Whereas, position-based routing requires the nodes to know their own location, which can be obtained by a location system such a GPS. The accuracy of a GPS might not be enough for multi-UAV systems which are highly mobile at high speed. Moreover, GPS provides location updates every second which might not be sufficient for several multi-UAV missions. To overcome this issue, the nodes can be equipped with Inertial measurement units, which can be calibrated by GPS signals.
 
 Position-based routing protocols are generally classified on two properties, "location service" and "forwarding strategy".
 
 \paragraph{Location Services}
-Besides their own location, the nodes may need to know the location of destination nodes. Most position-based routing protocols employ a location service to maintain and distribute the location of a node. The location services can be classified based on the number of nodes that maintain the location information and for the number of nodes for which the location servers maintain the information. Thereby, the four possible combinations can be \cite{}
+Besides their own location, the nodes may need to know the location of destination nodes. Most position-based routing protocols employ a location service to maintain and distribute the location of a node. The location services can be classified based on the number of nodes that maintain the location information and for the number of nodes for which the location servers maintain the information. Thereby, the four possible combinations can be \cite{967595}
+
+\textbf{Some-for-some:} Some nodes in the network maintain and provide the location information for some of the nodes.
+
+\textbf{Some-for-all:} Some nodes in the network maintain and provide the location information for all the nodes.
+
+\textbf{All-for-all:} All nodes maintain the location information for every other node.
+
+\textbf{All-for-some:} All nodes maintain the location information for a subset of the nodes. 
+Moreover, there are different methods to distribute location information. A few of the proposed methods are flooding \cite{Basagni:1998:DRE:288235.288254}, grid location service \cite{Li:2000:SLS:345910.345931} and quorum-based location service \cite{769770}.
+
+\paragraph{Forwarding Strategies}
+After a node has obtained the location of the destination node, there needs to be a forwarding/routing strategy to deliver the packet. Forwarding strategies in geographical routing can be grouped as follows:
+
+\textbf{Greedy forwarding} Assuming a source node S needs to send a packet to a destination node D, where S and D are not in the direct transmission range of each other, node S will pick an intermediate node T from among the nodes in the transmission range of node S such that T is the closer to node D than S. Node T will follow the same procedure until a penultimate node which had D in its direct transmission range receives the packet and forwards the packet to D. 
+Greedy routing strategies are guaranteed to be loop-free (since the packet never travels backward), however, greedy strategies don't guarantee packet delivery even though there is a path between source S to destination D. It happens when a node can't find an intermediate node which is closer to the destination than the node itself. Nodes in such situation are referred to as concave nodes. There are several variations of greedy forwarding and the recovery strategies presented in the literature \cite{OUBBATI201729} \cite{6238283} \cite{967595} \cite{Stojmenovic:2002:PRA:2288474.2290160}.
+
+\textbf{Face routing:} In this technique, faces on a planar graph are traversed following a technique known as "right hand rule", where the algorithm keeps track of all the times it crosses the line connecting the source to destination. After covering an entire face, the algorithm moves onto one of the intersections that are nearest to the destination. This continues until the destination is eventually reached \cite{4448977} \cite{6238283}. Face routing is also a common recovery strategy in greedy routing strategy. Although the complexity of face routing is higher than greedy routing, face routing guarantees delivery - where possible. Various modifications to the face routing strategy are presented in \cite{6238283}.
+
+\textbf{Hybrid Greedy-Face Routing:} While Greedy routing has less algorithmic complexity, face routing guarantees delivery. Hybrid approaches combine the two approaches i.e. it uses greedy routing while it is possible and then resorts to face routing when it encounters a routing void (local maxima). The primary challenge in this approach is to determine the exact moment when the algorithm should switch back to greedy routing. If the switch is too early, then the algorithm might get stuck in another local maxima, but switching too late will lead to inefficient face routing for too long. The protocols that tackle this problem have been surveyed in \cite{6238283}.
+
+Another approach that doesn't use either one of these approaches was presented in Location Aided Routing \cite{Ko:1998:LRM:288235.288252}. This approach determines a "request zone" and an "expected zone" according to the packet parameters and then forwards the packet in that region.
+\subsection{Petal Routing}
+
+\section{Routing in 3 dimensional ad hoc network}
