@@ -7,22 +7,78 @@ A wireless ad hoc network is a decentralized network of nodes where there is no 
 
 Flying ad hoc networks are a subset of MANETs and consist of nodes capable of flight. The nodes have high degree of mobility, and the distance between the FANET nodes is larger as compared to MANET nodes. These nodes can be manned airplanes, unmanned guided drones or unmanned unguided drones. The span of the network also varies from few hundred meters to several kilometers. One important distinction about FANETs is that the participating nodes have a common mission and their mobility model depends on the mission \cite{OUBBATI201729}. In this section, we discuss the different characteristics, applications, advantages and challenges of FANETs.
 
-\subsection{FANET Characteristics, Applications and Challenges}
-
+\subsection{FANET Characteristics and Applications}
+\paragraph{FANET Characteristics}
 FANETs differ from MANETs on several properties. Some of them are as follows.
 
 \textbf{Node Type and mobility:} Typical nodes in a FANET would be unmanned aerial vehicles (UAVs) which can be further differentiated based on their size, namely, large, small and mini UAVs \cite{OUBBATI201729}. Their mobility, transmission range, altitude, speed, and energy autonomy depends accordingly on their corresponding sizes. A comparison between these types of UAVs is presented in table \ref{tab:uav_comparison} \cite{OUBBATI201729}.
+
 \begin{table}
 \caption{Comparison of different type of FANET nodes}
 \label{tab:uav_comparison}
-\begin{tabular}{|p{0.4\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|}}
+\begin{tabular}{|p{0.23\linewidth}|p{0.23\linewidth}|p{0.26\linewidth}|p{0.26\linewidth}|}
 \toprule
 Properties & Mini UAVs & Small UAVs & Large UAVs\\
 \midrule
 Transmission Range & Small & Medium & Large\\
+\midrule
 Altitude 	& $ \approx 300 m$ & $ \approx 2000 m$ & $> 3000 m$ \\
-Energy Autonomy & Restricted (Battery Dependent) & Not Restricted (On-board solar panels or fuel) &  Not Restricted (On-board solar panels or fuel) \\
+\midrule
 Speed & Medium & High & Very High \\
+\midrule
+Energy Autonomy & Restricted (Battery Dependent) & Not Restricted (On-board solar panels or fuel) &  Not Restricted (On-board solar panels or fuel) \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\textbf{Network Connectivity and QoS requirements:} Depending on the UAV density (number of UAVs is a unit volume) and the node mobility, the connectivity varies. Although the node movement is predefined according to the mission, it can be updated during the mission due to sensor errors, environmental conditions or change of mission altogether. These affect the link quality and efficiency of routing protocols. QoS requirements also differ on a mission basis. Some missions are network delay tolerant while others are not. Depending on the applications, some FANETs can aim to optimize different subsets of QoS parameters like latency, bandwidth, packet loss, jitter etc.
+
+\paragraph{FANET Applications}
+FANETs applications can be grouped into three categories based on the entities in the network and cooperation model among them \cite{BEKMEZCI20131254}.
+\textbf{Multi-UAV cooperation:} Certain tasks require the UAVs to autonomously complete the mission in a time limit without human interaction. In such applications, there is no awareness of the ground environment and thereby doesn’t need any ground infrastructure. The UAVs cooperate and coordinate according to the predetermined application and correct the flight path in response to the environmental factors and errors. Example applications would include plume wrapping, target detection, monitoring disasters etc.
+\textbf{UAV-to-ground collaboration:} In certain applications, the UAVs need to periodically relay data to a ground location so that it can be acted upon in real time. Such applications require ground infrastructure which can be either mobile or fixed. Examples include search and rescue missions, military monitoring etc.
+\textbf{UAV-to-VANET collaboration:} In the third kind, the aerial UAVs can communicate and coordinate with vehicles on the ground to accomplice certain tasks. Such applications may require ground infrastructure and human involvement. This type of hybrid ad hoc network is a relatively new kind of wireless communication. Examples include route guidance, traffic monitoring, data packet delivery etc.
+
+The above information is summarized in table \ref{tab:uav_applications}
+
+\begin{table}
+\caption{UAV Applications}
+\label{tab:uav_applications}
+\begin{tabular}{|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|p{0.2\linewidth}|}
+\toprule
+Parameters & Multi-UAV cooperation & UAV-to-ground tasks & UAV-to-VANET collaborations\\
+\midrule
+UAV density & High & Medium & Low\\
+\midrule
+Ground Environment 	& Not aware &  Aware & Aware  \\
+\midrule
+Infrastructure & No & Yes &  Maybe \\
+\midrule
+Obstacles effect & Low & High & Medium \\
+\midrule
+Task Duration & Limited & Not Limited & Not limited \\
+\midrule
+Human Operator & No & Yes & Maybe \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Routing in Ad-hoc Networks}
+
+In a multi-UAV system all the nodes might not be in the direct transmission range of each other, hence routing techniques are needed for successful communication between distant nodes. Due to node mobility and wireless medium, routing in MANETs is a challenging task which further exacerbates in case of FANETs. This happens due to higher mobility and more degrees of freedom. 
+The common MANET routing protocols are generally grouped into two broad groups, namely, topology-based and position-based routing \cite{6238283}. In this section, we will discuss some examples of these protocols and their properties.
+
+\subsection{Topology-based routing protocols:}
+These approaches are like destination IP address-based routing. Topology-based routing protocols maintain a network graph and a path for each destination. The network graph creation can be further classified as proactive, reactive and hybrid approaches. 
+\textbf{Proactive approach:} In this routing approach, a node maintains the path to each node in the network through periodic updates to other nodes. Since the path is already known the packets can be immediately forwarded towards the destination. The downside is that due to high mobility the link information becomes stale quickly which leads to routing failure. The overhead of maintaining a dynamic network makes this approach difficult to scale.
+\textbf{Reactive approach:} In this routing approach, a node initiates path discovery when it needs to reach a destination. The node sends out route discovery request messages to other nodes (the node might keep the route information for future use) as needed. 
+\textbf{Hybrid approach:} In hybrid approaches, the network is divided into zones. For intra-zone communications proactive approach is adopted while for inter-zone communications a reactive approach is adopted. 
+While topology-based approaches guarantee packet delivery if the destination is reachable, they have a high maintenance cost in terms of memory and communication overhead. Moreover, topology-based approaches are more suitable for relatively static networks compared to MANETs.
+
+\subsection{Position-based routing protocols:}
+These approaches route packets based on the geographic position of the destination. In highly dynamic networks, position-based routing approaches have been experimentally confirmed to be more scalable than those which don’t use geographic information \cite{Stojmenovic:2002:PRA:2288474.2290160}. Geographic routing approaches don’t need to share and store link information – rather just the immediate radio neighbors – and thereby make routing decisions on a hop-by-hop basis. Whereas, position-based routing requires the nodes to know their own location, which can be obtained by a location system such a GPS. The accuracy of a GPS might not be enough for multi-UAV systems which are highly mobile at high speed. Moreover, GPS provides location updates every second which might not be sufficient for several multi-UAV missions. To overcome this issue, the nodes can be equipped with Inertial measurement units, which can be calibrated by GPS signals.
+
+Position-based routing protocols are generally classified on two properties, "location service" and "forwarding strategy".
+
+\paragraph{Location Services}
+Besides their own location, the nodes may need to know the location of destination nodes. Most position-based routing protocols employ a location service to maintain and distribute the location of a node. The location services can be classified based on the number of nodes that maintain the location information and for the number of nodes for which the location servers maintain the information. Thereby, the four possible combinations can be \cite{}
