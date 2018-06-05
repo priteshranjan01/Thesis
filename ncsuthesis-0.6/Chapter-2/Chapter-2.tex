@@ -22,7 +22,7 @@ Properties & Mini UAVs & Small UAVs & Large UAVs\\
 \midrule
 Transmission Range & Small & Medium & Large\\
 \midrule
-Altitude 	& $ \approx 300 m$ & $ \approx 2000 m$ & $> 3000 m$ \\
+Altitude 	& $ $\approx$ 300 m$ & $ $\approx$ 2000 m$ & $ > 3000 m$ \\
 \midrule
 Speed & Medium & High & Very High \\
 \midrule
@@ -35,8 +35,11 @@ Energy Autonomy & Restricted (Battery Dependent) & Not Restricted (On-board sola
 
 \paragraph{FANET Applications}
 FANETs applications can be grouped into three categories based on the entities in the network and cooperation model among them \cite{BEKMEZCI20131254}.
-\textbf{Multi-UAV cooperation:} Certain tasks require the UAVs to autonomously complete the mission in a time limit without human interaction. In such applications, there is no awareness of the ground environment and thereby doesn't need any ground infrastructure. The UAVs cooperate and coordinate according to the predetermined application and correct the flight path in response to the environmental factors and errors. Example applications would include plume wrapping, target detection, monitoring disasters etc.
+
+\textbf{Multi-UAV cooperation:} Certain tasks require the UAVs to autonomously complete the mission in a time limit without human interaction. In such applications, there is no awareness of the ground environment and thereby doesn't need any ground infrastructure. The UAVs cooperate and coordinate according to the predetermined application and correct the flight path in response to the environmental factors and errors. Example applications would include plume wrapping, target detection, monitoring disasters etc. 
+
 \textbf{UAV-to-ground collaboration:} In certain applications, the UAVs need to periodically relay data to a ground location so that it can be acted upon in real time. Such applications require ground infrastructure which can be either mobile or fixed. Examples include search and rescue missions, military monitoring etc.
+
 \textbf{UAV-to-VANET collaboration:} In the third kind, the aerial UAVs can communicate and coordinate with vehicles on the ground to accomplice certain tasks. Such applications may require ground infrastructure and human involvement. This type of hybrid ad hoc network is a relatively new kind of wireless communication. Examples include route guidance, traffic monitoring, data packet delivery etc.
 
 The above information is summarized in table \ref{tab:uav_applications}
@@ -63,15 +66,19 @@ Human Operator & No & Yes & Maybe \\
 \end{tabular}
 \end{table}
 
-\section{Routing in 2 dimensional ad hoc networks}
+\section{Routing in 2D ad hoc networks}
 
-In a multi-UAV system all the nodes might not be in the direct transmission range of each other, hence routing techniques are needed for successful communication between distant nodes. Due to node mobility and wireless medium, routing in MANETs is a challenging task which further exacerbates in case of FANETs. This happens due to higher mobility and more degrees of freedom. 
+In a large ad hoc network all the nodes might not be in the direct transmission range of each other, hence routing techniques are needed for successful communication between distant nodes. Node mobility and wireless medium leads to frequent topology changes and link failures which makes routing in MANETs a challenging task.
+
 The common MANET routing protocols are generally grouped into two broad groups, namely, topology-based and position-based routing \cite{6238283}. In this section, we will discuss some examples of these protocols and their properties.
 
 \subsection{Topology-based routing protocols}
 These approaches are like destination IP address-based routing. Topology-based routing protocols maintain a network graph and a path for each destination. The network graph creation can be further classified as proactive, reactive and hybrid approaches. 
+
 \textbf{Proactive approach:} In this routing approach, a node maintains the path to each node in the network through periodic updates to other nodes. Since the path is already known the packets can be immediately forwarded towards the destination. The downside is that due to high mobility the link information becomes stale quickly which leads to routing failure. The overhead of maintaining a dynamic network makes this approach difficult to scale.
+
 \textbf{Reactive approach} In this routing approach, a node initiates path discovery when it needs to reach a destination. The node sends out route discovery request messages to other nodes (the node might keep the route information for future use) as needed. 
+
 \textbf{Hybrid approach} In hybrid approaches, the network is divided into zones. For intra-zone communications proactive approach is adopted while for inter-zone communications a reactive approach is adopted. 
 While topology-based approaches guarantee packet delivery if the destination is reachable, they have a high maintenance cost in terms of memory and communication overhead. Moreover, topology-based approaches are more suitable for relatively static networks compared to MANETs.
 
@@ -103,6 +110,13 @@ Greedy routing strategies are guaranteed to be loop-free (since the packet never
 \textbf{Hybrid Greedy-Face Routing:} While Greedy routing has less algorithmic complexity, face routing guarantees delivery. Hybrid approaches combine the two approaches i.e. it uses greedy routing while it is possible and then resorts to face routing when it encounters a routing void (local maxima). The primary challenge in this approach is to determine the exact moment when the algorithm should switch back to greedy routing. If the switch is too early, then the algorithm might get stuck in another local maxima, but switching too late will lead to inefficient face routing for too long. The protocols that tackle this problem have been surveyed in \cite{6238283}.
 
 Another approach that doesn't use either one of these approaches was presented in Location Aided Routing \cite{Ko:1998:LRM:288235.288252}. This approach determines a "request zone" and an "expected zone" according to the packet parameters and then forwards the packet in that region.
-\subsection{Petal Routing}
 
-\section{Routing in 3 dimensional ad hoc network}
+\section{Routing in 3D ad hoc networks}
+
+\textbf{Content}: Difference between 2D and 3D networks and the applicability of the 2D geographical routing approaches in 3D networks, and some proposed 3D geographical routing approaches.
+ 
+\textbf{Intent}: Convince the reader that 2D geographical routing protocols are not directly applicable to 3D networks and introduce some of the proposed 3D geographical routing approaches.
+
+Majority of the proposed geographic routing protocols and techniques have been developed with 2D networks in mind. Thus, these protocols are applicable for networks where the height of the network is less than the transmission radius of the nodes. However, they do not extend easily to 3D networks. For example, face routing would fail to guarantee delivery in 3D networks because planar sub-graph and face perimeters are only applicable to 2D planes \cite{4721268}.
+
+One of the proposed approaches is the Unit Ball Graph \cite{4509730}, which extends the Unit Disk Graph approach. The authors in \cite{4509730} \cite{Durocher2010} have concluded that a deterministic recovery strategy is impossible in 3D networks (as opposed in 2D networks) and hence they have proposed a randomized recovery strategy in their localized geographic routing algorithm. Some other 3D routing protocols have been summarized in \cite{BEKMEZCI20131254} \cite{7437029}.
