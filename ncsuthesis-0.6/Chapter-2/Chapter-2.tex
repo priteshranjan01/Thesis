@@ -22,7 +22,7 @@ Properties & Mini UAVs & Small UAVs & Large UAVs\\
 \midrule
 Transmission Range & Small & Medium & Large\\
 \midrule
-Altitude 	& $ $\approx$ 300 m$ & $ $\approx$ 2000 m$ & $ > 3000 m$ \\
+Altitude 	&  about 300 m   & about 2000 m  &  > 3000 m \\
 \midrule
 Speed & Medium & High & Very High \\
 \midrule
@@ -87,7 +87,7 @@ These approaches route packets based on the geographic position of the destinati
 
 Position-based routing protocols are generally classified on two properties, "location service" and "forwarding strategy".
 
-\paragraph{Location Services}
+\paragraph{Location Services} \label{loc_service}
 Besides their own location, the nodes may need to know the location of destination nodes. Most position-based routing protocols employ a location service to maintain and distribute the location of a node. The location services can be classified based on the number of nodes that maintain the location information and for the number of nodes for which the location servers maintain the information. Thereby, the four possible combinations can be \cite{967595}
 
 \textbf{Some-for-some:} Some nodes in the network maintain and provide the location information for some of the nodes.
@@ -117,6 +117,8 @@ Another approach that doesn't use either one of these approaches was presented i
  
 \textbf{Intent}: Convince the reader that 2D geographical routing protocols are not directly applicable to 3D networks and introduce some of the proposed 3D geographical routing approaches.
 
-Majority of the proposed geographic routing protocols and techniques have been developed with 2D networks in mind. Thus, these protocols are applicable for networks where the height of the network is less than the transmission radius of the nodes. However, they do not extend easily to 3D networks. For example, face routing would fail to guarantee delivery in 3D networks because planar sub-graph and face perimeters are only applicable to 2D planes \cite{4721268}.
+FANETs are characterized by high mobility which leads to a frequent change in the underlying terrains. Not only this may introduce frequent topology changes but also terrain-induced blind spots which affect the wireless channel. The wireless channel is also affected by the antenna orientation – which changes frequently due to high mobility – and thereby causes link fluctuations. Moreover, communication requirements in a FANET are mission specific and can widely vary from one type to another. For example, in a search and rescue mission, the information should be transmitted to the base station in real-time while some surveillance missions might choose to gather and store on board and delivering it to the base after the mission has completed or in batches.
+
+These characteristics are peculiar to FANET and hence require an exclusive study of routing protocols which shall be particularly suited to aerial networking. However, most of the proposed geographic routing protocols and techniques have been developed with 2D networks in mind. Thus, these protocols are applicable for networks where the height of the network is less than the transmission radius of the nodes. However, they do not extend easily to 3D networks. For example, face routing would fail to guarantee delivery in 3D networks because planar sub-graph and face perimeters are only applicable to 2D planes \cite{4721268}.
 
 One of the proposed approaches is the Unit Ball Graph \cite{4509730}, which extends the Unit Disk Graph approach. The authors in \cite{4509730} \cite{Durocher2010} have concluded that a deterministic recovery strategy is impossible in 3D networks (as opposed in 2D networks) and hence they have proposed a randomized recovery strategy in their localized geographic routing algorithm. Some other 3D routing protocols have been summarized in \cite{BEKMEZCI20131254} \cite{7437029}.

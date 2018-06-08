@@ -1,6 +1,5 @@
 \chapter{Implementation}
 
-\section{Mission: Convex Plume Wrapping}
 \section{Simulator Introduction: Qrsim}
 QRSim \cite{denardi2013rn} is a multi-vehicle software simulator developed at Department of Computer Science, University College London. QRSim allows a set of UAVs to communicate and cooperate to achieve common goals. It simulates the dynamics of the UAVs as well as the sensors (GPS, IMU, camera) and the inaccuracies in the sensors and environment (e.g. wind, GPS errors). The simulator also includes the implementation of some specific task scenarios. For example, a pursue evasion game, a search and rescue mission etc. The simulator is specifically helpful in simulating general higher-level tasks that involve multiple platforms which sense and react in their environment. The QRSim has been implemented in MATLAB and the source code is available on GitHub \cite{qrsim_github} under modified BSD license.
 
@@ -28,13 +27,18 @@ The QRSim simulator updates the simulation state after one time-quantum (DT) has
 \centering
 \includegraphics[width=0.8\textwidth]{Chapter-4/figs/beaglebone}
 \caption{Measuring processing delay on BeagleBone Black}
-\label{fig:proc_delay}
+\label{fig:proc_delay_setup}
 \end{figure}
-The setup in \fref{fig:proc_delay} is similar to the configuration proposed in \cite{1378257} to measure network processing delay.
+The setup in \fref{fig:proc_delay_setup} is similar to the configuration proposed in \cite{1378257} to measure network processing delay.
 
-\textbf{TODO: INSERT THE PROCESSING DELAY GRAPH}
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=0.8\textwidth]{Chapter-4/figs/transmission_time}
+\caption{Round trip time between two BeagleBone Black}
+\label{fig:proc_delay_graph}
+\end{figure}
 
-It becomes evident that the total message processing delay is much smaller to the time step. Hence, in our simulation, a message transmitted in the time quantum 'x' is also received in the same time quantum 'x'.
+A sample plot of round trip time over 1000 iterations is shown in \fref{fig:proc_delay_graph}. It becomes evident that the total message processing delay is much smaller to the time step. Hence, in our simulation, a message transmitted in the time quantum 'x' is also received in the same time quantum 'x'.
 
 \subsection{Radio propagation model}
 Our propagation model is based on free space model derived from the Friis transmission formula. \cite{5735774}
@@ -77,12 +81,16 @@ Thereafter, Message Reception Probability $(r) = P(R > R_{th})$. Where $r_{th}$ 
 \label{fig:packet_loss}
 \end{figure}
 The values used in our simulation are mentioned below and the corresponding received signal strength plots and packet loss plot are shown in \fref{fig:signal_strength} and \fref{fig:packet_loss}:
-\begin{itemize}
-    \item $T = 17.1  dBm $  
-    \item $R_th = -87.2 dBm $
-    \item $f = 2400 MHz $
-    \item $ $\sigma$ = 2 $ 
-\end{itemize}
+
+\begin{eqnarray*}
+\begin{aligned}
+    & T = 17.1  dBm \\
+    & R_{th} = -87.2 dBm \\ 
+    & f = 2400 MHz \\
+    & \sigma = 2 \\
+\end{aligned}
+\end{eqnarray*}
+
 
 \subsection{Inter-UAV attractive and repulsive force function}
 The UAVs are initially arranged in a grid and then this grid is maintained during the mission. To maintain the grid formation whenever two UAVs, go out of a certain range, they exert a virtual pull towards each other, and when they come too close they exert a virtual push towards each other. Moreover, once two UAVs are beyond a certain limit, their influence should gradually wear off. We use the following sigmoid function to calculate the push or pull force. 
@@ -98,7 +106,7 @@ The UAVs are initially arranged in a grid and then this grid is maintained durin
 \end{figure}
 Figure \fref{fig:force_fn} shows plot the force magnitude as a function of distance.
 
-\subsection{Packet flooding}
+\subsection{Location service} \label{loc_service_impl}
 \section{Routing Protocol Implementation}
 \subsection{Unicast to a UAV}
 \subsection{Geocast to a region}
