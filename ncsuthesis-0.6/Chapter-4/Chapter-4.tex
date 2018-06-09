@@ -1,6 +1,6 @@
 \chapter{Implementation}
 
-\section{Simulator Introduction: Qrsim}
+\section{Simulator Introduction: Qrsim} \label{qrsim_intro}
 QRSim \cite{denardi2013rn} is a multi-vehicle software simulator developed at Department of Computer Science, University College London. QRSim allows a set of UAVs to communicate and cooperate to achieve common goals. It simulates the dynamics of the UAVs as well as the sensors (GPS, IMU, camera) and the inaccuracies in the sensors and environment (e.g. wind, GPS errors). The simulator also includes the implementation of some specific task scenarios. For example, a pursue evasion game, a search and rescue mission etc. The simulator is specifically helpful in simulating general higher-level tasks that involve multiple platforms which sense and react in their environment. The QRSim has been implemented in MATLAB and the source code is available on GitHub \cite{qrsim_github} under modified BSD license.
 
 We now present a brief overview of the main concepts of the simulator and the relevant classes in its implementation \cite{qrsim_github_manual}.
@@ -40,7 +40,7 @@ The setup in \fref{fig:proc_delay_setup} is similar to the configuration propose
 
 A sample plot of round trip time over 1000 iterations is shown in \fref{fig:proc_delay_graph}. It becomes evident that the total message processing delay is much smaller to the time step. Hence, in our simulation, a message transmitted in the time quantum 'x' is also received in the same time quantum 'x'.
 
-\subsection{Radio propagation model}
+\subsection{Radio propagation model} \label{free_space_path_loss}
 Our propagation model is based on free space model derived from the Friis transmission formula. \cite{5735774}
 
 The received signal strength $R$ can be calculated as 
@@ -92,7 +92,7 @@ The values used in our simulation are mentioned below and the corresponding rece
 \end{eqnarray*}
 
 
-\subsection{Inter-UAV attractive and repulsive force function}
+\subsection{Inter-UAV attractive and repulsive force}
 The UAVs are initially arranged in a grid and then this grid is maintained during the mission. To maintain the grid formation whenever two UAVs, go out of a certain range, they exert a virtual pull towards each other, and when they come too close they exert a virtual push towards each other. Moreover, once two UAVs are beyond a certain limit, their influence should gradually wear off. We use the following sigmoid function to calculate the push or pull force. 
 
 \begin{equation}

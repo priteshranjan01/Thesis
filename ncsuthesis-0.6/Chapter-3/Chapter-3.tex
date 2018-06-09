@@ -3,7 +3,7 @@ Each multi-UAV mission has its own set of requirements in terms of size and numb
 
 \section{FANET Mission}
 
-The use of multi-cluster UAVs to track gas plumes like volcanic eruptions, forest fires, and environmental contamination has increased in the previous decade. The UAVs are required to wrap around the plume, report the contamination level and possibly move with the plume. As the plume moves in time and space the UAVs need to plan their trajectories in cooperation with each other to evenly spread out on the surface of the plume while maintaining a safe distance from each other and avoiding any static or dynamic obstacle in their path. A detailed description of the problem and a multi-UAV distributed solution has been provided in \cite{8080382}. The initial formation of drones is shown in \fref{fig:mesh_formation}. As an aid to visualization think of the mesh as a piece of cloth moving towards a spherical ball and eventually wrapping around the ball. As shown in \fref{fig:mesh_formation} the UAVs start in the mesh formation and move towards the plume. Whenever a UAV detects a contamination it stops while rest of the UAVs continue their path. Eventually, the inter-UAV distance crosses a threshold and the moving drone tries to move closer to the stopped UAV. These inter-drone forces maintain an approximate mesh structure while resulting in the UAVs wrapping around the plume. A desired final state of UAVs wrapped around the plume is shown in \fref{fig:final_state}.  
+The use of multi-cluster UAVs to track gas plumes like volcanic eruptions, forest fires, and environmental contamination has increased in the previous decade. The network requirement from a FANET depends on the mission. For example, in a plume tracking mission, the UAVs would be required to wrap around the plume, report the contamination level and possibly move with the plume. As the plume moves in time and space the UAVs need to plan their trajectories in cooperation with each other to evenly spread out on the surface of the plume while maintaining a safe distance from each other and avoiding any static or dynamic obstacle in their path. A detailed description of the problem and a multi-UAV distributed solution has been provided in \cite{8080382}. The initial formation of drones is shown in \fref{fig:mesh_formation}. As an aid to visualization think of the mesh as a piece of cloth moving towards a spherical ball and eventually wrapping around the ball. As shown in \fref{fig:mesh_formation} the UAVs start in the mesh formation and move towards the plume. Whenever a UAV detects a contamination it stops while rest of the UAVs continue their path. Eventually, the inter-UAV distance crosses a threshold and the moving drone tries to move closer to the stopped UAV. These inter-drone forces maintain an approximate mesh structure while resulting in the UAVs wrapping around the plume. A desired final state of UAVs wrapped around the plume is shown in \fref{fig:final_state}.  
 
 \begin{figure}[hbtp]
 \centering
@@ -86,6 +86,7 @@ We first define the packet header that the source node attaches to the payload.
 \item Transmitter Location (\emph{trLoc}): GPS coordinate of the node that had last transmitted the packet.
 \item Timestamp (\emph{timestamp}): The time when this packet was transmitted by the source.
 \item Width (\emph{w}): The width of the transmission zone for the packet. Explained later in this section.
+\item Hops To Live (\emph{HTL}): A node forwards a message only if HTL > 0 and reduces HTL by 1 before forwarding the packet. 
 \item Acknowledgement Required (\emph{ackReq}): This flag denotes whether the source node is expecting an \emph{ack} reply.
 \item Update Allowed (\emph{update}): This flag denotes whether an intermediate node can update the message headers. For example, if the intermediate node has a location update that is later than the message's \emph{timestamp}.
 
@@ -105,11 +106,14 @@ A sample depiction of transmission zone is depicted in \fref{fig:spheroid}.
 We now present a high-level algorithmic description of the message primitives described in section \ref{comm_reqs}.
 
 \textbf{Flooding}
-When a source node 'S' needs to send a message to every node in the network it creates a message with the following parameters.
+When a source node 'S' needs to send a message to every node in the network it creates a header with the following parameters.
 \begin{eqnarray*}
-msg = & message(destId = FLOOD, dLoc = IGNORE, radius = IGNORE,\\
-    & update = IGNORE, width = IGNORE, ackReq = FALSE)
-\end{eqnarray*} and encapsulates the data in this header.
+header = & messageHeader(destId = FLOOD, dLoc = IGNORE, radius = IGNORE,\\
+    & update = IGNORE, width = IGNORE, ackReq = FALSE, \\
+    & HTL = NETWORK-DIAMETER)
+\end{eqnarray*} 
+
+Source node `S' then encapsulates the data in this header. NETWORK-DIAMETER is a macro which represents the maximum hops that a packet can travel. 
 
 Node S then broadcasts this message in the wireless medium. An intermediate node 'N', on receiving the message for the first time reads the contents and rebroadcasts it. Afterward 'N' discards any duplicate receptions of the message. This guarantees that the flooding is loop-free.
 The path of receive algorithm that deals with FLOOD packets is depicted in algorithm \ref{flood_recv}
@@ -117,12 +121,17 @@ The path of receive algorithm that deals with FLOOD packets is depicted in algor
 \begin{algorithm}
 \SetAlgoLined
 \DontPrintSemicolon
+\eIf{msg.HTL <= 0}{
+    discard(msg)\;
+    EXIT\;}{
+    msg.HTL -= 1\;}
 \eIf {msg.destId == FLOOD} { 
     \eIf{msg.pId is new}{
-        send(msg)\;
+        transmit(msg)\;
         Add msg.pId to seenIdSet\;
         }{
-        discardMessage(msg)\;
+        discard(msg)\;
+        EXIT\;
         }
 }{
     ...
@@ -133,17 +142,18 @@ The path of receive algorithm that deals with FLOOD packets is depicted in algor
 \textbf{Geocast}
 
 
-When a source node 'S' needs to send a message to \emph{any} node in a spherical region 'R' with center at \emph{'dLoc'} and radius \emph{'r'} it chooses an appropriate width 'w' and creates a message with the following parameters in the header
+When a source node 'S' needs to send a message to \emph{any} node in a spherical region 'R' with center at \emph{'dLoc'} and radius \emph{'r'} it chooses an appropriate width 'w' and creates a header with the following parameters.
 \begin{eqnarray*}
-msg = & message(destId = ANY, dLoc = [x,y,z], radius = r,\\
+header = & messageHeader(destId = ANY, dLoc = [x,y,z], radius = r,\\
     & update = IGNORE, width = w, ackReq = FALSE)
 \end{eqnarray*}
-encapsulates the data in this header and transmits the packet.
+Source node `S' then encapsulates the data in this header and transmits the packet.
 
 \begin{algorithm}
 \SetAlgoLined
 \DontPrintSemicolon
 \If{msg.pId is in transmittedMsgIdSet}{
+    discard(msg)\;
     EXIT\;
 }
 \If{msg.destId == ANY}{
@@ -154,7 +164,7 @@ encapsulates the data in this header and transmits the packet.
     }
 }
 
-\If{N is inside transmission zone}{
+\If{N is insideTransmissionZone(msg, myLoc)}{
     \eIf{msg.pId is in bufWait}{
         Increase duplicate count for msg.pId\; 
         save msg.tLoc\;
@@ -171,13 +181,14 @@ encapsulates the data in this header and transmits the packet.
 
 \textbf{Unicast}
 
-When a source node 's' needs to send a message to destination node 'D' then 'S' first consults its location table for the location of destination 'D' and creates a message with the following header.
+When a source node 's' needs to send a message to destination node 'D' then 'S' first consults its location table for the location of destination 'D' and creates a header with the following parameters.
 
 \begin{eqnarray*}
-msg = & message(destId = destID, dLoc = [x,y,z], radius = IGNORE,\\
+header = & messageHeader(destId = destID, dLoc = [x,y,z], radius = IGNORE,\\
     & update = IGNORE, width = w, ackReq = FALSE)
 \end{eqnarray*}
-encapsulates the data in this header and transmits the packet.
+
+Source node `S' then encapsulates the data in this header and transmits the packet.
 
 On the receiving side the node 'N' follows the following algorithm.
 
