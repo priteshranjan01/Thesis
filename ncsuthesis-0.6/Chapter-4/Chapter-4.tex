@@ -123,7 +123,7 @@ The Qrsim simulator has a \emph{Pelican} class which represents a quadrotor dron
 
 When a transmitting node `T' needs to send a message `msg' to a destination `D', the simulation first checks if the signal strength at the destination will be higher than the receiver's threshold (\ref{transmissionSuccess}). If yes, then the simulation appends the message to the in\textunderscore msg\textunderscore queue of the destination node. (\ref{sendMessage})
 
-\begin{algorithm}[H]
+\begin{algorithm}
 \SetAlgoLined
 \DontPrintSemicolon
 \KwResult{transmissionSuccess: TRUE/FALSE}
@@ -142,8 +142,7 @@ strength = signalStrength(ts, f, d, gTx, gRx)\;
 \caption{transmissionSuccess(T, D)} \label{transmissionSuccess}
 \end{algorithm}
 
-\begin{algorithm}[H]
-\SetAlgoLined
+\begin{algorithm}
 \KwResult{status: TRUE/FALSE}
 \DontPrintSemicolon
 status = FALSE\;
@@ -160,26 +159,25 @@ status = TRUE\;
 
 A receiver iterates over each message in its message queue and discards any duplicate messages. For new messages, the node does the required processing according to the message header and adds the \emph{msg.pId} to the \emph{seen\textunderscore msg\textunderscore set}. Algorithm readMessages \ref{readAllMessages}
 
-
-\begin{algorithm}[H]
-\SetAlgoLined
-\DontPrintSemicolon
-\SetKwInOut{Input}{drone: object of class Pelican}
-\SetKwProg{readMessages}{readMessages}{}{}
-\readMessages{$(drone)$}{
-\ForEach {msg \in drone.in\textunderscore msg\textunderscore queue}{
-    \eIf{msg in drone.seen\textunderscore msg\textunderscore set}{
-    discard(msg)\;}
-    {
-    processMessage(msg)\;
-    add(drone.seen\textunderscore msg\textunderscore set, msg)\;
+\begin{algorithm}
+    \caption{Read and process the messages in a drone's buffer} 
+    \label{readAllMessages}
+    \DontPrintSemicolon
+    \SetKwInOut{Input}{inputs}
+    \SetKwProg{readMessages}{readMessages}{}{}
+    
+    \readMessages{(drone)}{
+    \Input{drone object of class Pelican}
+    \ForEach {msg $\in$ drone.in\textunderscore msg\textunderscore queue}{%
+        \eIf{msg $\in$ drone.seen\textunderscore msg\textunderscore set}{%
+            discard(msg)\;
+        }{
+            processMessage(msg)\;
+            add(drone.seen\textunderscore msg\textunderscore set, msg)\;
+            }
+        }
     }
- }
-}
-\caption{Read and process the messages in the drone's buffer} \label{readAllMessages}
 \end{algorithm}
-
-
 
 \subsection{Inter-UAV attractive and repulsive force}
 The UAVs are initially arranged in a grid and then this grid is maintained during the mission. To maintain the grid formation whenever two UAVs, go out of a certain range, they exert a virtual pull towards each other, and when they come too close they exert a virtual push towards each other. Moreover, once two UAVs are beyond a certain limit, their influence should gradually wear off. We use the following sigmoid function to calculate the push or pull force. 
@@ -200,9 +198,9 @@ The UAVs are initially arranged in a grid and then this grid is maintained durin
 
 For the geographical routing protocols to work successfully, the source nodes need to know the geo-location (or an approximation) of the destination location. To provide this information we need a service that maintains and distributes the location table. Some of the proposed location service algorithms have been mentioned in section \ref{loc_service}. In our simulation we have implemented an all-for-all location service i.e. every node maintains the location information of every other node in the network. 
 We have employed a hop limited broadcast algorithm to distribute the location table, i.e. in each time step, every node broadcasts its location table to the nodes in its transmission range. The receiving node `R' checks if the location of a node `N' in the message and the timestamp of when the information was generated. If the location in the message is new, then `R' updates its location table. It should be noted that the nodes don't transmit the message again.
-The effect is that two nodes `p' and `q' which are `x' transmission ranges apart will have a location information that is $x \cdot DT $ time steps old and therefore not an exact but rather an approximate location of each other. The motivation for this implementation is derived from the concept termed as `distance effect’ in \cite{Basagni:1998:DRE:288235.288254}, which states
+The effect is that two nodes `p' and `q' which are `x' transmission ranges apart will have a location information that is $x \cdot DT $ time steps old and therefore not an exact but rather an approximate location of each other. The motivation for this implementation is derived from the concept termed as `distance effect' in \cite{Basagni:1998:DRE:288235.288254}, which states
 \begin{quotation}
-The greater the distance separating two nodes, the slower they appear to be moving with respect to each other. Thus, nodes that are far apart, need to update each other’s location less frequently than nodes closer together.
+The greater the distance separating two nodes, the slower they appear to be moving with respect to each other. Thus, nodes that are far apart, need to update each other's location less frequently than nodes closer together.
 \end{quotation}
 However, in \cite{Basagni:1998:DRE:288235.288254} the authors have associated an `age' with the messages which determines how far a message should be transmitted from the source location and the nodes periodically send messages with `large' and `small' age. However, in our case, the information flows gradually like waves in each time-step.
 
@@ -213,11 +211,13 @@ However, in \cite{Basagni:1998:DRE:288235.288254} the authors have associated an
 
 
 Geocast:
-In this section, we shall present the implementation details of the methods discussed in section [ZZZ]. In particular, we shall explain the implementation of function insideTransmissionZone, insideDestinationZone, calculateBufferTime and messageHeader.
+In this section, we shall present the implementation details of the methods discussed in section \ref{routing_protocol}. In particular, we shall explain the implementation of function \emph{insideTransmissionZone} and \emph{calculateBufferTime}.
 
-messageHeader
+\paragraph{insideTransmissioZone}
 
-insideTransmissioZone
-The idea behind our routing algorithm is to restrict retransmissions to only those nodes that are inside a region. We have chosen a spheroid volume with sLoc(p, q, r) and dLoc(a, b, c) as their foci points and msg.w as its minor axis length. An intermediate node `N(x, y, z)’ shall forward a message if and only if N is inside the spheroid. We check for this condition using the definition of the ellipsoid `The sum of the distances to the two foci is constant for every point on the curve.’
-That is
+The idea behind our routing algorithm is to restrict retransmissions to only those nodes that are inside a region. We have chosen a spheroid volume with sLoc(p, q, r) and dLoc(a, b, c) as their foci points and msg.w as its minor axis length. An intermediate node `N(x, y, z)' shall forward a message if and only if N is inside the spheroid. We check for this condition using the definition of the ellipsoid `The sum of the distances to the two foci points is constant for every point on the curve.'
+\begin{equation} \label{ellipsoid_equation}
+    distance(N, sLoc) + distance(N, dLoc) == K
+\end{equation}
 
+where $K$ is the length of the major-axis. Hence, if the left hand side of equation \ref{ellipsoid_equation} is $\leq K$ then, the point N is inside the spheroid.

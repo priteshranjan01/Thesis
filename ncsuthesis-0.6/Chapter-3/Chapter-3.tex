@@ -51,7 +51,7 @@ In summary, we need to define and facilitate the following message primitives.
 \end{enumerate}
 Arguments like \emph{sourceUAV} and \emph{destinationUAV} are unique identifiers - possibly IP addresses, while \emph{destinationCoordinates} together with \emph{radius} represent a spherical region with specified coordinate as the center and specified radius.
 
-\section{Routing protocol}
+\section{Routing protocol} \label{routing_protocol}
 
 \textbf{Content: Discuss the location service employed to get destination location, packet header, message primitives and packet routing strategy.}
 
@@ -107,10 +107,11 @@ We now present a high-level algorithmic description of the message primitives de
 
 \textbf{Flooding}
 When a source node 'S' needs to send a message to every node in the network it creates a header with the following parameters.
+
 \begin{eqnarray*}
-header = & messageHeader(destId = FLOOD, dLoc = IGNORE, radius = IGNORE,\\
-    & update = IGNORE, width = IGNORE, ackReq = FALSE, \\
-    & HTL = NETWORK-DIAMETER)
+header = & messageHeader(destId = FLOOD, dLoc = IGNORE, \\
+    & radius = IGNORE, pdate = IGNORE, width = IGNORE, \\
+    & ackReq = FALSE, HTL = NETWORK-DIAMETER)
 \end{eqnarray*} 
 
 Source node `S' then encapsulates the data in this header. NETWORK-DIAMETER is a macro which represents the maximum hops that a packet can travel. 
