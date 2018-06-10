@@ -157,14 +157,14 @@ Source node `S' then encapsulates the data in this header and transmits the pack
     EXIT\;
 }
 \If{msg.destId == ANY}{
-    \If{N is inside the destination region R}{
+    \If{insideDestinationRegion(msg, myLoc)}{
         Transmit(msg)\;
         Add msg.pId to transmittedMsgIdSet\;
         EXIT\;
     }
 }
 
-\If{N is insideTransmissionZone(msg, myLoc)}{
+\If{insideTransmissionZone(msg, myLoc) == TRUE}{
     \eIf{msg.pId is in bufWait}{
         Increase duplicate count for msg.pId\; 
         save msg.tLoc\;

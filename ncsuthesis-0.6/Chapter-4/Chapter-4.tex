@@ -9,7 +9,7 @@ We now present a brief overview of the main concepts of the simulator and the re
 \textbf{Platforms} represent quadrotor dynamics and sensor models and other platform specific phenomena like aerodynamic turbulence. Platforms subclass the abstract class Platform (defined in \emph{/qrsim/platforms/Platform.m})
 
 \textbf{Environment objects} represent the phenomena that have a direct or indirect impact of the platforms but are not specific to the platforms like wind or the satellite vehicles of the GPS system or the obstacles in the flight path. Environment objects subclass \emph{EnvironmentObject} (defined in \emph{/qrsim/environment}).
-\paragraph{State:} State class maintains the state of all the objects taking part in the simulation. For example, the state structure stores variables like 'the simulator time (\emph{t})', 'pseudo-random number generator streams (\emph{rStreams})', 'the simulator time step (\emph{DT})', 'the handle to the 3D graphics visualization (\emph{display3D})'.
+\paragraph{State:} State class maintains the state of all the objects taking part in the simulation. For example, the state structure stores variables like `the simulator time (\emph{t})', `pseudo-random number generator streams (\emph{rStreams})', `the simulator time step (\emph{DT})', `the handle to the 3D graphics visualization (\emph{display3D})'.
 \paragraph{Steppable:} Steppable is an abstract class that represents every object that evolves with time. For example, the location of UAV updates after each time quantum (\emph{DT}). Hence the method \emph{step()} exposed by the Steppable class is called which called \emph{update()} on the UAV.
 \paragraph{Task:}
 Task class allows defining a variety of UAV scenarios and the various objectives for the platforms. The Task class provides a way to derive task objects that specify a scenario and an activity. It exposes methods like \emph{init()}, \emph{updateReward()}, \emph{reward()}, \emph{reset()} and \emph{step()}.
@@ -21,24 +21,6 @@ The main QRSim class defines methods to initialize, set up and control the simul
 \section{Qrsim Extensions}
 
 To simulate the message routing protocol and the plume wrapping mission, we had to add/extend some features. In this section, we describe our additions/extensions and our rationale behind our decisions.
-\subsection{Message transmission delay}
-The QRSim simulator updates the simulation state after one time-quantum (DT) has passed. DT is a configurable parameter with the default value of 0.2 seconds. Below we present an estimate of the propagation delay, experimental setup and data on the message processing delay (transmission + reception) on a BeagleBone Black device.
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=0.8\textwidth]{Chapter-4/figs/beaglebone}
-\caption{Measuring processing delay on BeagleBone Black}
-\label{fig:proc_delay_setup}
-\end{figure}
-The setup in \fref{fig:proc_delay_setup} is similar to the configuration proposed in \cite{1378257} to measure network processing delay.
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=0.8\textwidth]{Chapter-4/figs/transmission_time}
-\caption{Round trip time between two BeagleBone Black}
-\label{fig:proc_delay_graph}
-\end{figure}
-
-A sample plot of round trip time over 1000 iterations is shown in \fref{fig:proc_delay_graph}. It becomes evident that the total message processing delay is much smaller to the time step. Hence, in our simulation, a message transmitted in the time quantum 'x' is also received in the same time quantum 'x'.
 
 \subsection{Radio propagation model} \label{free_space_path_loss}
 Our propagation model is based on free space model derived from the Friis transmission formula. \cite{5735774}
@@ -56,7 +38,7 @@ Where,
 \end{itemize}
 And Path Loss ($L$) is calculated by the free space path loss equation.
 \begin{equation}
- L (dB) = 20 * log_{10} d + 20 * log_{10}(f) + 32.44 - Ft_x - Gr_x 
+ L (dB) = 20 * log_{10} d + 20 * log_{10}(f) + 32.44 - Gt_x - Gr_x 
 \end{equation}
 Where
 \begin{itemize}
@@ -66,7 +48,7 @@ Where
     \item $Gr_x : $ the receiver antenna gain.
 \end{itemize}
 
-Thereafter, Message Reception Probability $(r) = P(R > R_{th})$. Where $r_{th}$ is the threshold for successful reception of a message. Appropriate values of $T, R, R_{th}$ can be plugged in from the data sheet of WL18xxMOD WiLink\texttrademark Wi-Fi\textregistered   \cite{wilink} (section 5.6 and 5.7) used in BeagleBone black.
+Thereafter, Message Reception Probability $(r) = P(R > R_{th})$. Where $r_{th}$ is the threshold for successful reception of a message. Appropriate values of $T, R, R_{th}$ can be plugged in from the data sheet of WL18xxMOD WiLink\texttrademark Wi-Fi\textregistered   \cite{wilink} (section 5.6 and 5.7 in the data sheet) used in BeagleBone black.
 
 \begin{figure}[hbtp]
 \centering
@@ -91,22 +73,151 @@ The values used in our simulation are mentioned below and the corresponding rece
 \end{aligned}
 \end{eqnarray*}
 
+The function to get the signal strength at the destination is algorithm \ref{signalStrength}
+
+\begin{algorithm}
+\DontPrintSemicolon
+\SetAlgoLined
+\KwResult{residualStrength: dBm}
+fspl = $ 20 \times \log_{10}(\dfrac{d}{1000}) + 20 \times log_{10}(f) + 32.44 $\;
+
+mean = 0\;
+sigma = 2\;
+N = normrnd(mean, sigma)\;
+residualStrength = ts - fspl + N\;
+\caption{signalStrength(ts, f, d, gTx, gRx)} \label{signalStrength}
+\end{algorithm}    
+
+\subsection{Processing delay}
+
+In simulating message transmission we have ignored propagation delay and transmission delay in our calculation. This is because our estimate of packet processing delay at a UAV is much smaller in comparison to the time quantum (DT) in which the QRSim simulator updates the simulation state. DT is a configurable parameter with the default value of 0.2 seconds. Below we present an estimate of the propagation delay, experimental setup and data on the message processing delay (transmission + reception) on a BeagleBone Black device.
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=0.8\textwidth]{Chapter-4/figs/beaglebone}
+\caption{Measuring processing delay on BeagleBone Black}
+\label{fig:proc_delay_setup}
+\end{figure}
+The setup in \fref{fig:proc_delay_setup} is similar to the configuration proposed in \cite{1378257} to measure network processing delay.
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=0.8\textwidth]{Chapter-4/figs/transmission_time}
+\caption{Round trip time between two BeagleBone Black}
+\label{fig:proc_delay_graph}
+\end{figure}
+
+A sample plot of round trip time over 1000 iterations is shown in \fref{fig:proc_delay_graph}. It becomes evident that the total message processing delay is much smaller to the time step. Hence, in our simulation, a message transmitted in the time quantum `x' is also received in the same time quantum `x'.
+
+\subsection{Message transmission}
+
+The Qrsim simulator has a \emph{Pelican} class which represents a quadrotor drone. An object of pelican class stores drone specific data like location coordinates, velocity, rotor thrust etc. To simulate message transmission we added the following properties to the class.
+\begin{itemize}
+\item transmitter\textunderscore strength
+\item receiver\textunderscore threshold
+\item transmitter\textunderscore gain
+\item receiver\textunderscore gain
+\item transmission\textunderscore frequency
+\item in\textunderscore msg\textunderscore queue
+\item seen\textunderscore msg\textunderscore set
+\end{itemize}
+
+When a transmitting node `T' needs to send a message `msg' to a destination `D', the simulation first checks if the signal strength at the destination will be higher than the receiver's threshold (\ref{transmissionSuccess}). If yes, then the simulation appends the message to the in\textunderscore msg\textunderscore queue of the destination node. (\ref{sendMessage})
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\DontPrintSemicolon
+\KwResult{transmissionSuccess: TRUE/FALSE}
+transmissionSuccess = FALSE\;
+d = distance(T.location, D.location)\;
+f = T.transmission\textunderscore frequency\;
+ts = T.transmitter\textunderscore strength\;
+gTx = T.transmitter\textunderscore gain\;
+gRx = D.receiver\textunderscore gain\;
+receiverThreshold = D.receiver\textunderscore threshold\;
+strength = signalStrength(ts, f, d, gTx, gRx)\;
+\If {strength > receiverThreshold}{
+    transmissionSuccess = TRUE\;
+}
+
+\caption{transmissionSuccess(T, D)} \label{transmissionSuccess}
+\end{algorithm}
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\KwResult{status: TRUE/FALSE}
+\DontPrintSemicolon
+status = FALSE\;
+\If{msg.HTL <= 0}{EXIT\;}
+msg.HTL = msg.HTL - 1\;
+\If{transmissionSuccess(T, D) == TRUE}{
+append(D.in\textunderscore msg\textunderscore queue, msg)\;
+status = TRUE\;
+}
+
+\caption{sendMessage(msg, T, D)} \label{sendMessage}
+\end{algorithm}
+
+
+A receiver iterates over each message in its message queue and discards any duplicate messages. For new messages, the node does the required processing according to the message header and adds the \emph{msg.pId} to the \emph{seen\textunderscore msg\textunderscore set}. Algorithm readMessages \ref{readAllMessages}
+
+
+\begin{algorithm}[H]
+\SetAlgoLined
+\DontPrintSemicolon
+\SetKwInOut{Input}{drone: object of class Pelican}
+\SetKwProg{readMessages}{readMessages}{}{}
+\readMessages{$(drone)$}{
+\ForEach {msg \in drone.in\textunderscore msg\textunderscore queue}{
+    \eIf{msg in drone.seen\textunderscore msg\textunderscore set}{
+    discard(msg)\;}
+    {
+    processMessage(msg)\;
+    add(drone.seen\textunderscore msg\textunderscore set, msg)\;
+    }
+ }
+}
+\caption{Read and process the messages in the drone's buffer} \label{readAllMessages}
+\end{algorithm}
+
+
 
 \subsection{Inter-UAV attractive and repulsive force}
 The UAVs are initially arranged in a grid and then this grid is maintained during the mission. To maintain the grid formation whenever two UAVs, go out of a certain range, they exert a virtual pull towards each other, and when they come too close they exert a virtual push towards each other. Moreover, once two UAVs are beyond a certain limit, their influence should gradually wear off. We use the following sigmoid function to calculate the push or pull force. 
-
 \begin{equation}
     Y = \frac{X}{1 + |X|}
 \end{equation}
+
+\fref{fig:force_fn} shows a plot of the force magnitude as a function of distance.
+
 \begin{figure}
 \centering
 \includegraphics[width=1\textwidth]{ncsuthesis-0.6/Chapter-4/figs/force_function}
 \caption{Inter UAV force vs distance}
 \label{fig:force_fn}
 \end{figure}
-Figure \fref{fig:force_fn} shows plot the force magnitude as a function of distance.
 
 \subsection{Location service} \label{loc_service_impl}
+
+For the geographical routing protocols to work successfully, the source nodes need to know the geo-location (or an approximation) of the destination location. To provide this information we need a service that maintains and distributes the location table. Some of the proposed location service algorithms have been mentioned in section \ref{loc_service}. In our simulation we have implemented an all-for-all location service i.e. every node maintains the location information of every other node in the network. 
+We have employed a hop limited broadcast algorithm to distribute the location table, i.e. in each time step, every node broadcasts its location table to the nodes in its transmission range. The receiving node `R' checks if the location of a node `N' in the message and the timestamp of when the information was generated. If the location in the message is new, then `R' updates its location table. It should be noted that the nodes don't transmit the message again.
+The effect is that two nodes `p' and `q' which are `x' transmission ranges apart will have a location information that is $x \cdot DT $ time steps old and therefore not an exact but rather an approximate location of each other. The motivation for this implementation is derived from the concept termed as `distance effect’ in \cite{Basagni:1998:DRE:288235.288254}, which states
+\begin{quotation}
+The greater the distance separating two nodes, the slower they appear to be moving with respect to each other. Thus, nodes that are far apart, need to update each other’s location less frequently than nodes closer together.
+\end{quotation}
+However, in \cite{Basagni:1998:DRE:288235.288254} the authors have associated an `age' with the messages which determines how far a message should be transmitted from the source location and the nodes periodically send messages with `large' and `small' age. However, in our case, the information flows gradually like waves in each time-step.
+
+
 \section{Routing Protocol Implementation}
 \subsection{Unicast to a UAV}
 \subsection{Geocast to a region}
+
+
+Geocast:
+In this section, we shall present the implementation details of the methods discussed in section [ZZZ]. In particular, we shall explain the implementation of function insideTransmissionZone, insideDestinationZone, calculateBufferTime and messageHeader.
+
+messageHeader
+
+insideTransmissioZone
+The idea behind our routing algorithm is to restrict retransmissions to only those nodes that are inside a region. We have chosen a spheroid volume with sLoc(p, q, r) and dLoc(a, b, c) as their foci points and msg.w as its minor axis length. An intermediate node `N(x, y, z)’ shall forward a message if and only if N is inside the spheroid. We check for this condition using the definition of the ellipsoid `The sum of the distances to the two foci is constant for every point on the curve.’
+That is
+
