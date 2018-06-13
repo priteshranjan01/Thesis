@@ -111,34 +111,38 @@ When a source node 'S' needs to send a message to every node in the network it c
 \begin{eqnarray*}
 header = & messageHeader(destId = FLOOD, dLoc = IGNORE, \\
     & radius = IGNORE, pdate = IGNORE, width = IGNORE, \\
-    & ackReq = FALSE, HTL = NETWORK-DIAMETER)
+    & ackReq = FALSE, HTL = NETWORK\textunderscore DIAMETER)
 \end{eqnarray*} 
 
-Source node `S' then encapsulates the data in this header. NETWORK-DIAMETER is a macro which represents the maximum hops that a packet can travel. 
+Source node `S' then encapsulates the data in this header. NETWORK\textunderscore DIAMETER is a macro which represents the maximum hops that a packet can travel. 
 
 Node S then broadcasts this message in the wireless medium. An intermediate node 'N', on receiving the message for the first time reads the contents and rebroadcasts it. Afterward 'N' discards any duplicate receptions of the message. This guarantees that the flooding is loop-free.
 The path of receive algorithm that deals with FLOOD packets is depicted in algorithm \ref{flood_recv}
 
+
 \begin{algorithm}
-\SetAlgoLined
+\caption{Receive(msg): Flood} 
+\label{flood_recv}
 \DontPrintSemicolon
-\eIf{msg.HTL <= 0}{
-    discard(msg)\;
-    EXIT\;}{
-    msg.HTL -= 1\;}
-\eIf {msg.destId == FLOOD} { 
-    \eIf{msg.pId is new}{
-        transmit(msg)\;
-        Add msg.pId to seenIdSet\;
+\SetKwProg{Flood}{Flood}{}{}
+\Flood{(msg)}{%
+    \eIf {msg.destId == FLOOD}{
+        \eIf{msg.pId $\notin$ seenIdSet} {
+            msg.HTL = msg.HTL - 1\;
+            Add (seenIdSet, msg.pId)\;
+            \If {msg.HTL > 0}{
+                transmit(msg)\;
+            }
         }{
-        discard(msg)\;
-        EXIT\;
+            discard(msg)\;
         }
-}{
+    }{
     ...
+    }
 }
-\caption{Receive(msg): Flood} \label{flood_recv}
+
 \end{algorithm}
+
 
 \textbf{Geocast}
 
