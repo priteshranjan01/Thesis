@@ -15,7 +15,12 @@ Initially, the drones start in a mesh formation arranged in a 2D grid as shown i
 
 The messages sent among the drones are assumed to be small and we have not considered transmission errors and congestion separately, rather they are assumed to be represented by the free space path loss model explained in section \ref{free_space_path_loss}. We have picked 200 furthest pairs of drones for our result evaluation. 
 
-In the following sections we compare the performance of the two schemes of our routing protocol to flooding algorithm. The x axis for 
+In the following sections we compare the performance of the two schemes of our routing protocol to flooding algorithm. These are the expectations of a routing algorithm that would be suitable for our mission. 
+\begin{enumerate}
+\item Packet delivery rate between any two pairs of nodes should be approximately equal to a flooding algorithm. 
+\item The average number of total transmission per transmitted packet should be significantly lower than flooding.
+\end{enumerate}
+ 
 \section{Delivery ratio}
 \section{Average number of hops}
 \section{Average end to end delay}
@@ -39,3 +44,11 @@ For example, with scaling factor = 20, Number of Drones = 36, and flying space v
 & {and} & v = \dfrac{4 \times 3.14 \times 250 ^ 3}{3} = 65416667 unit ^ 3 \\
 & \Rightarrow & \dfrac{V}{v} \approx 31
 \end{eqnarray*}
+
+\paragraph{Discussion - ROUGH}
+
+Our routing algorithm doesn't maintain or exchange any topology graph hence it neither needs to exchange control information nor it has to do the computation heavy path calculations.
+
+Moreover, our algorithm doesn't do a route discovery, which eliminates the typical delay associated with reactive routing algorithms. 
+
+Our algorithm is robust i.e. the messages are routed through geo-diffuse pathsets and matches the delivery rate of flooding.

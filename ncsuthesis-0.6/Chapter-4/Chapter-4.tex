@@ -62,31 +62,50 @@ Thereafter, Message Reception Probability $(r) = P(R > R_{th})$. Where $r_{th}$ 
 \caption{Packet loss vs distance}
 \label{fig:packet_loss}
 \end{figure}
-The values used in our simulation are mentioned below and the corresponding received signal strength plots and packet loss plot are shown in \fref{fig:signal_strength} and \fref{fig:packet_loss}:
+The values used in our simulation are mentioned in \ref{tab:fspl_parameters} and the corresponding received signal strength plot and packet loss plot are shown in \fref{fig:signal_strength} and \fref{fig:packet_loss}:
 
-\begin{eqnarray*}
-\begin{aligned}
-    & T = 17.1  dBm \\
-    & R_{th} = -87.2 dBm \\ 
-    & f = 2400 MHz \\
-    & \sigma = 2 \\
-\end{aligned}
-\end{eqnarray*}
+\begin{table}
+\caption{Free space path loss - equation parameters}
+\label{tab:fspl_parameters}
+\begin{tabular}{|p{0.43\linewidth}|p{0.43\linewidth}|}
+\toprule
+Parameters & value \cite{wilink}\\
+\midrule
+Transmitter Strength (T) & 17.1  dBm \\
+\midrule
+Receiver Threshold ($R_{th}$)	& -87.2 dBm  \\
+\midrule
+Transmission Frequency (f) & 2400 MHz \\
+\midrule
+Standard Deviation ($\sigma$) & 2\\
+\midrule
+Receiver Antenna Gain (gTx) & 0 dBm\\
+\midrule
+Transmitter Antenna Gain & 0 dBm \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 
 The function to get the signal strength at the destination is algorithm \ref{signalStrength}
-
 \begin{algorithm}
+\caption{Signal strength at destination}
+\label{signalStrength}
 \DontPrintSemicolon
-\SetAlgoLined
-\KwResult{residualStrength: dBm}
-fspl = $ 20 \times \log_{10}(\dfrac{d}{1000}) + 20 \times log_{10}(f) + 32.44 $\;
+\SetKwInOut{Output}{output}
+\SetKwProg{signalStrength}{signalStrength}{}{}
 
-mean = 0\;
-sigma = 2\;
-N = normrnd(mean, sigma)\;
-residualStrength = ts - fspl + N\;
-\caption{signalStrength(ts, f, d, gTx, gRx)} \label{signalStrength}
-\end{algorithm}    
+\signalStrength{(T, f, d, gTx, gRx)}{
+    \Output{residualStrength: dBm}
+    fspl = $ 20 \times \log_{10}(\dfrac{d}{1000}) + 20 \times log_{10}(f) + 32.44 - gTx - gRx$\;
+    
+    mean = 0\;
+    sigma = 2\;
+    N = normrnd(mean, sigma)\;
+    residualStrength = T - fspl + N\;
+}
+\end{algorithm} 
+
 
 \subsection{Processing delay}
 
@@ -179,7 +198,7 @@ A receiver iterates over each message in its message queue and discards any dupl
     }
 \end{algorithm}
 
-\subsection{Inter-UAV attractive and repulsive force}
+\subsection{Inter-UAV forces}
 The UAVs are initially arranged in a grid and then this grid is maintained during the mission. To maintain the grid formation whenever two UAVs, go out of a certain range, they exert a virtual pull towards each other, and when they come too close they exert a virtual push towards each other. Moreover, once two UAVs are beyond a certain limit, their influence should gradually wear off. We use the following sigmoid function to calculate the push or pull force. 
 \begin{equation}
     Y = \frac{X}{1 + |X|}
@@ -196,24 +215,17 @@ The UAVs are initially arranged in a grid and then this grid is maintained durin
 
 \subsection{Location service} \label{loc_service_impl}
 
-For the geographical routing protocols to work successfully, the source nodes need to know the geo-location (or an approximation) of the destination location. To provide this information we need a service that maintains and distributes the location table. Some of the proposed location service algorithms have been mentioned in section \ref{loc_service}. In our simulation we have implemented an all-for-all location service i.e. every node maintains the location information of every other node in the network. 
-We have employed a hop limited broadcast algorithm to distribute the location table, i.e. in each time step, every node broadcasts its location table to the nodes in its transmission range. The receiving node `R' checks if the location of a node `N' in the message and the timestamp of when the information was generated. If the location in the message is new, then `R' updates its location table. It should be noted that the nodes don't transmit the message again.
+For the geographical routing protocols to work successfully, the source node needs to know the geo-location (or an approximation) of the destination location. To provide this information we need a service that maintains and distributes the location table. Some of the proposed location service algorithms have been mentioned in section \ref{loc_service}. In our simulation we have implemented an all-for-all location service i.e. every node maintains the location information of every other node in the network. 
+
+We have employed a hop limited broadcast algorithm to distribute the location table, i.e. in each time step, every node broadcasts its location table to the nodes in its transmission range. The receiving node `R' checks if the location of a node `N' in the message and the timestamp of when the information was generated. If the location in the message is new, then `R' updates its location table. It should be noted that the nodes don't transmit the message again. This is achieved by setting the `HTL' parameter in the message header to 1. It should be noted that a fast moving node can choose to increase the HTL to cover a larger volume in the same time-step.
+
 The effect is that two nodes `p' and `q' which are `x' transmission ranges apart will have a location information that is $x \cdot DT $ time steps old and therefore not an exact but rather an approximate location of each other. The motivation for this implementation is derived from the concept termed as `distance effect' in \cite{Basagni:1998:DRE:288235.288254}, which states
 \begin{quotation}
 The greater the distance separating two nodes, the slower they appear to be moving with respect to each other. Thus, nodes that are far apart, need to update each other's location less frequently than nodes closer together.
 \end{quotation}
 However, in \cite{Basagni:1998:DRE:288235.288254} the authors have associated an `age' with the messages which determines how far a message should be transmitted from the source location and the nodes periodically send messages with `large' and `small' age. However, in our case, the information flows gradually like waves in each time-step.
 
-
-\section{Routing Protocol Implementation}
-\subsection{Unicast to a UAV}
-\subsection{Geocast to a region}
-
-
-Geocast:
-In this section, we shall present the implementation details of the methods discussed in section \ref{routing_protocol}. In particular, we shall explain the implementation of function \emph{insideTransmissionZone} and \emph{calculateBufferTime}.
-
-\paragraph{insideTransmissioZone}
+\subsection{Transmission Zone}
 
 The idea behind our routing algorithm is to restrict retransmissions to only those nodes that are inside a region. We have chosen a spheroid volume with sLoc(p, q, r) and dLoc(a, b, c) as their foci points and msg.w as its minor axis length. An intermediate node `N(x, y, z)' shall forward a message if and only if N is inside the spheroid. We check for this condition using the definition of the ellipsoid `The sum of the distances to the two foci points is constant for every point on the curve.'
 \begin{equation} \label{ellipsoid_equation}
@@ -221,3 +233,4 @@ The idea behind our routing algorithm is to restrict retransmissions to only tho
 \end{equation}
 
 where $K$ is the length of the major-axis. Hence, if the left hand side of equation \ref{ellipsoid_equation} is $\leq K$ then, the point N is inside the spheroid.
+

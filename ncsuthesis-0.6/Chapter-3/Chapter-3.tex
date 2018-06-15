@@ -3,7 +3,10 @@ Each multi-UAV mission has its own set of requirements in terms of size and numb
 
 \section{FANET Mission}
 
-The use of multi-cluster UAVs to track gas plumes like volcanic eruptions, forest fires, and environmental contamination has increased in the previous decade. The network requirement from a FANET depends on the mission. For example, in a plume tracking mission, the UAVs would be required to wrap around the plume, report the contamination level and possibly move with the plume. As the plume moves in time and space the UAVs need to plan their trajectories in cooperation with each other to evenly spread out on the surface of the plume while maintaining a safe distance from each other and avoiding any static or dynamic obstacle in their path. A detailed description of the problem and a multi-UAV distributed solution has been provided in \cite{8080382}. The initial formation of drones is shown in \fref{fig:mesh_formation}. As an aid to visualization think of the mesh as a piece of cloth moving towards a spherical ball and eventually wrapping around the ball. As shown in \fref{fig:mesh_formation} the UAVs start in the mesh formation and move towards the plume. Whenever a UAV detects a contamination it stops while rest of the UAVs continue their path. Eventually, the inter-UAV distance crosses a threshold and the moving drone tries to move closer to the stopped UAV. These inter-drone forces maintain an approximate mesh structure while resulting in the UAVs wrapping around the plume. A desired final state of UAVs wrapped around the plume is shown in \fref{fig:final_state}.  
+The use of multi-cluster UAVs to track gas plumes like volcanic eruptions, forest fires, and environmental contamination has increased in the previous decade. The network requirement from a FANET depends on the mission. For example, in a plume tracking mission, the UAVs would be required to wrap around the plume, report the contamination level and possibly move with the plume. Once the UAVs have been deployed they have complete device autonomy (i.e. each UAV decides its future waypoints and velocity itself using the inputs of onboard sensors and don't need these instructions from a human operator) and mission autonomy (i.e. the UAVs must cooperate and coordinate with each other for the successful completion of the mission). It should also be noted that although the UAVs coordinate in the decision-making process, a network-wide consensus is not required for a specific UAVs operation. As the plume moves in time and space the UAVs should evenly spread out on the surface of the plume while maintaining a safe distance from each other and avoiding any static or dynamic obstacle in their path. 
+
+A detailed description of the problem and a multi-UAV distributed solution has been provided in \cite{8080382}. In the proposed solution the authors have assumed that the mission starts with an initial formation of drones in a 2-dimensional grid (shown in \fref{fig:mesh_formation}). Thereafter, the UAVs move towards the plume autonomously without any ground support. Whenever a UAV detects a contamination it stops and maintains its position with respect to the plume while rest of the UAVs continue their search. If the inter-UAV distance crosses a threshold (too close or too far away) then the moving drone tries to move further or closer to the stationary UAV. These inter-drone forces maintain an approximate mesh structure while resulting in the UAVs wrapping around the plume. As an aid to visualizing this process, think of the mesh as a piece of cloth moving towards a spherical ball and eventually wrapping around the ball. \fref{YYY} shows an intermediate state with drones wrapping around the plume and \fref{fig:final_state} shows a desired final state of UAVs wrapped around the plume.
+  
 
 \begin{figure}[hbtp]
 \centering
@@ -19,37 +22,62 @@ The use of multi-cluster UAVs to track gas plumes like volcanic eruptions, fores
 \label{fig:final_state}
 \end{figure}
 
-Some of the assumptions made in \cite{8080382} are 
-\begin{itemize}
-\item{The shape of the plume is spherical, a simple convex hull.}
-\item{When the mission starts the UAVs are arranged in a mesh formation moving towards the plume.}
-\item{The UAVs have sensors which can detect the contamination after the density crosses a certain threshold.}
-\item{All the UAVs are in direct radio range of each other}
-\item{The location of each UAV is known at all time in an absolute 3D space}
-\end{itemize}
-
-In this work we relax the last two assumptions, i.e. all the UAVs are \emph{not} within the direct broadcast range and a UAV always knows its own location via GPS but \emph{doesn't know} the location of other UAVs. To facilitate multi-hop message passing we will need an efficient routing protocol which is a goal of this work.
 
 \section{Communication requirements} \label{comm_reqs}
 \textbf{Content}: There are different network requirements for communicating telemetry/ coordination and sensed data, some of them are delay tolerant and some need to be delivered to a specific region.
 
 \textbf{Intent}: Discuss the scenarios where uav-to-uav, uav-to-ground station unicast would be required and the scenarios where geocast would be suitable. 
 
-From a communications viewpoint, the UAVs need to communicate in different conditions which require specific message primitives. In this section, we shall discuss the specifics of such situations and the message primitives. Following are the communications requirements among the UAVs specific to the mission.
-\begin{enumerate}
-\item Since the UAVs are required to maintain an approximate mesh structure they need to approximate the distance with other drones. Therefore, the UAVs need to update each other of their GPS locations. This requires a facility to flood a message throughout the network. 
+In this section, we shall outline the qualitative and quantitative requirements from a communications viewpoint for the successful communication of the mission. We shall use these requirements to design the routing protocol, the message primitives and eventually as a yardstick to measure the performance of the proposed protocol. It should also be noted that the requirements are geared towards a specific mission and since the UAV applications are diverse, these communication demands, and requirements shall widely vary for different applications. For a comprehensive analysis of various civil UAV applications, we refer the readers to \cite{7463007}, where the authors have classified the civil applications of UAVs into four broad categories, namely, Search and Rescue, Area or Network Coverage, Construction, Delivery/transportation and presented the requirements from a communications viewpoint. 
 
-\item Sometimes, the UAVs need to navigate around each other while avoiding a collision. To check if the destination location (or the path) is void of other UAVs, the UAV sends a periodic beacon message to its destination geographic region. If some other UAV happens to be in the region then they negotiate their way around. It should be noted that the originator UAV doesn't know or care about the identity of the drone, rather the message is addressed to the geographical region. This requires a capability to geocast packets where the destination location is the address. These messages are \emph{not} delay-tolerant and need to be delivered in real time.
-\item In some missions where the cluster is formed of UAVs of different capabilities (some UAVs have extra sensors), there would be a need of one-to-one communication between the UAVs in real-time. Even in other scenarios, there would be a need for one-to-one communication. This necessitates, a facility to send unicast messages to a specific destination UAV.
-\end{enumerate}
+\textbf{Mission coverage:} Applications like plume tracking, wildfire monitoring or plume wrapping typically span a medium to large sized area in the order of tens of kilometers \cite{7463007}. Furthermore, the aerial network should consider the coverage volume expansion or shrinkage with time. The mission volume that we shall be considering would be $ \approx 1500 m \times 1500 m \times 1000 m $. 
 
-In summary, we need to define and facilitate the following message primitives.
-\begin{enumerate}
-\item \emph{Flood(message, sourceUAV)}
-\item \emph{Unicast(message, sourceUAV, destinationUAV)}
-\item \emph{Geocast(message, sourceUAV, destinationCoordinates, radius)}
-\end{enumerate}
-Arguments like \emph{sourceUAV} and \emph{destinationUAV} are unique identifiers - possibly IP addresses, while \emph{destinationCoordinates} together with \emph{radius} represent a spherical region with specified coordinate as the center and specified radius.
+\textbf{Network requirement:} Since the mission requires coordination among the participating UAVs, any two participating UAVs should be able to reliably communicate with each other (either directly or multi-hop connectivity). Moreover, the network should be able to reconfigure itself, in other words, the network should consider the nodes joining and leaving the network while the mission is in progress.
+
+\textbf{Number of nodes:} The number of UAVs required in a mission depends on the mission area, transceiver characteristics and the type of nodes employed. Assuming off-the-shelf Wi-fi transceivers and the above mentioned mission coverage the required number of nodes would be around 30. 
+
+\textbf{Connectivity to a base station:} In a real-life deployment scenario, the UAVs must be connected to a base station for safety and security purposes, although the data-rate requirement of the link can be mission specific. In our case, the UAVs need to send their telemetry information (GPS and IMU data) to the base station, however since the mission is fully autonomous with distributed decision-making capacity the entities don’t need to relay the coordination data to the base station. A frequency of 4-5 Hz or less is the standard for telemetry data exchange \cite{7463007}. 
+
+\textbf{Connectivity between the other UAVs:} Since the UAVs are required to maintain an approximate mesh structure they need to approximate the distance with other drones. Therefore, the UAVs need to update each other of their GPS locations in real-time. A suitable frequency of this data exchange could be 4-5 Hz. Also, in real deployment scenarios, the UAV cluster can be composed of drones with varying capabilities (UAVs have different sensors) which demands a need for one-to-one communication. Therefore, the UAVs must have a reliable connectivity to each other in either a single or multi-hop fashion. 
+
+\textbf{Traffic Demands:} The traffic in the aerial UAV network consists of control data (remote controlled data exchange), telemetry data (GPS and IMU data), coordination data (waypoint, mission plan exchange) and sensed data (sensor data). The actual traffic demands depend on the sensor-on-board the UAVs, the type of traffic exchanged in the network and the frequency of such exchange. As per \cite{NASA_UAV_mission_parameters}, imagery and chemical data would need to be collected which would require chemical analyzer, an infrared sensor, image or possibly a video camera. The sensed traffic is sensor dependent and can be, low-rate, bursty or high-rate. In our case, the UAVs need to exchange coordination data among each other, sensed data with the base station and telemetry data with each other as well as the base station. The data exchange with the base station can be periodic and delay-tolerant but the coordination data among the drones must real-time. As far as data rate is concerned 1 Mbps for images and 2 Mbps for video streaming is sufficient with a typical delay of not more thatn 50-100 ms \cite{7463007}. 
+
+\textbf{Collision Avoidance:} Once a UAV detects another UAV (e.g. via RADAR) in its flight path, they both need to navigate around each other to avoid a collision. To check if a future waypoint is void of other UAVs, the source UAV can send an anycast to that specific destination region. If some other UAV happens to be in the region then they should negotiate their way around. It should be noted that the originator UAV doesn't know or care about the identity of the drone, rather the message is addressed to the geographical region. This requires a capability to geocast packets where the destination location is the address. These messages are not delay-tolerant and need to be delivered in real time.
+
+\textbf{Scalability:} The number of nodes can be increased due to two reasons. (1) Increase the coverage volume (2) Increase the density of nodes to get a high-resolution sensory data. A scalabilable network  should handle the increase in a number of nodes/devices in the network and the performance should not degrade unreasonably. 
+
+\textbf{Localization and time synchronization:} The UAVs need to know and report their own location with an accuracy of $\approx 5 m$. This level of accuracy is achievable with off-the-shelf GPS devices and can be improved to a few centimeters by using dual-frequency receivers and/or augmentation systems \cite{gps_accuracy} . The UAVs can also synchronize their clocks through the information provided by GPS.
+
+The above information is summarized in table \ref{tab:communication_requirements}.
+\begin{table}
+\caption{Communication requirements}
+\label{tab:communication_requirements}
+\begin{tabular}{|p{0.38\linewidth}|p{0.47\linewidth}|}
+\toprule
+Requirements & Values\\
+\midrule
+Mission Coverage & Medium or Large $\approx 1500 m \times 1500 m \times 1200 m$ \\
+\midrule
+Network mode & ad hoc \\
+\midrule
+Number of nodes &  $\approx 30 $ \\
+\midrule
+Coordination data exchange frequency &  4-5 Hz \cite{7463007}\\
+\midrule
+Sensed data exchange frequency & 30 Hz for video, 1 Hz for IR and chemical analyzer \cite{7463007}\\
+\midrule
+Telemetry data exchange frequency & 4-5 Hz \cite{7463007}\\
+\midrule
+Coordination data link rate (up/down) & 4.8 /64 kbaud \cite{7463007} \\
+\midrule
+Sensed data link rate (up/down) & 4.8-9.6/64 kbaud \cite{NASA_UAV_mission_parameters} \\
+\midrule
+Delay & 50-100 ms \cite{7463007}\\
+\midrule
+Traffic type & periodic and real time (coordination data, telemetry data), delay tolerant (sensed data) \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \section{Routing protocol} \label{routing_protocol}
 
@@ -58,22 +86,18 @@ Arguments like \emph{sourceUAV} and \emph{destinationUAV} are unique identifiers
 \textbf{Intent: Explain how a node knows the location of the destination node, and when a node transmits a received message.
 }
 
-In this section, we shall describe the mechanism and the parameters for the routing protocol as employed in the message primitives. 
-These are our assumptions while designing the algorithm: 
+In this section, we shall first discuss our underlying assumptions in presenting our routing scheme, the packet header and then we shall discuss the message primitives derived from the communication requirements presented in section \ref{comm_reqs}.  
+
+\textbf{Assumptions:}
 \begin{enumerate}
 \item The wireless antennas on the nodes are omnidirectional.
 \item The nodes are reachable from each other i.e. a flooding algorithm can guarantee packet delivery between any pair of nodes and we use the delivery rate of flooding algorithm as an upper bound for our algorithm.
 \item The nodes always know their location via GPS. 
+\item The nodes synchronize their clock via GPS.
 \item A source node knows an approximate location of the destination node which is maintained in a location table and provided by a location service. Different implementations of a location service have been mentioned in section \ref{loc_service} and our implementation has been explained in section \ref{loc_service_impl}. 
 \end{enumerate}
 
-These are the expectations of a routing algorithm that would be suitable for our mission. 
-\begin{enumerate}
-\item Packet delivery rate between any two pairs of nodes should be approximately equal to a flooding algorithm. 
-\item The average number of total transmission per transmitted packet should be significantly lower than flooding.
-\end{enumerate}
-
-\paragraph{Packet Header} \label{packet_header}
+\subsection{Packet Header} \label{packet_header}
 We first define the packet header that the source node attaches to the payload.
 \begin{itemize}
 \item Packet ID (\emph{pId}): A number that uniquely identifies this packet among those transmitted by this node. The combination of source node identification and packet ID should uniquely identify a packet in the FANET. 
@@ -92,40 +116,52 @@ We first define the packet header that the source node attaches to the payload.
 
 \end{itemize}
 
-\paragraph{Transmission Zone:} Consider source node 'S' (at \emph{sLoc}) needs to send a message to a destination location \emph{dLoc}. The source node will first create a message (\emph{msg}) and defines a volume in the form of a spheroid with \emph{sLoc} and \emph{dLoc} as the two foci points and parameter 'w' as the minor-axis length. An intermediate node 'N' forwards this msg if and only if 'N' lies inside the spheroid defined by the msg parameters. This idea of constrained flooding is derived from the concept of the petal in \cite{6133499} and that of request zone in \cite{Ko:1998:LRM:288235.288252}. To increase reliability, the source node can increase the parameter transmission zone's width 'w'.
+\subsection{Message primitives} \label{message_primitives}
 
-A sample depiction of transmission zone is depicted in \fref{fig:spheroid}.
+As discussed in section \ref{comm_reqs} the following data exchange happen in the mission:
+\begin{enumerate}
+    \item UAV to all UAVs: Telemetry data (e.g. GPS, IMU data).
+    \item UAV to base station: Telemetry data and sensed data.
+    \item UAV to any UAV is a region: Coordination data (e.g. Future waypoint).
+\end{enumerate}
 
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=1\textwidth]{Chapter-3/figs/Spheroid}
-\caption{Transmission zone with source at sLoc and destination at dLoc}
-\label{fig:spheroid}
-\end{figure}
+To facilitate the above data exchange we should support the following message primitives:
+\begin{enumerate}
+\item \emph{Flood(message, sourceID)}
+\item \emph{Unicast(message, sourceID, destinationID)}
+\item \emph{Geocast(message, sourceID, destinationCoordinates, radius)}
+\end{enumerate}
 
-We now present a high-level algorithmic description of the message primitives described in section \ref{comm_reqs}.
+Here \emph{sourceID} and \emph{destinationID} are unique identifiers for a node - possibly IP addresses, while \emph{destinationCoordinates} together with \emph{radius} represent a spherical region with specified coordinate as the center and specified radius.
 
-\textbf{Flooding}
-When a source node 'S' needs to send a message to every node in the network it creates a header with the following parameters.
+We will now present a high-level algorithmic description of these message primitives.
+
+\paragraph{Flood}
+
+Flood primitive is ensures that the packet shall be received by all the nodes that are connected. When a source node `S' needs to send a message to every node in the network, it creates a header with the following parameters and encapsulates the data in this header.
 
 \begin{eqnarray*}
-header = & messageHeader(destId = FLOOD, dLoc = IGNORE, \\
-    & radius = IGNORE, pdate = IGNORE, width = IGNORE, \\
-    & ackReq = FALSE, HTL = NETWORK\textunderscore DIAMETER)
+& header = & messageHeader(destId = FLOOD, dLoc = IGNORE, \\
+&    & radius = IGNORE, pdate = IGNORE, width = IGNORE, \\
+&    & ackReq = FALSE, HTL = NETWORK\textunderscore DIAMETER)
 \end{eqnarray*} 
 
-Source node `S' then encapsulates the data in this header. NETWORK\textunderscore DIAMETER is a macro which represents the maximum hops that a packet can travel. 
+Node `S' then broadcasts this message to all its neighbors in the wireless medium. An intermediate node 'N', on receiving the message for the first time reads the contents and rebroadcasts it. Thereafter, `N' discards any duplicate receptions of the message. This guarantees that the flooding is loop-free. The benefit of Flooding is the protocol's robustness however there is a high overhead associated with flooding and hence it is suitable for small packets only.
 
-Node S then broadcasts this message in the wireless medium. An intermediate node 'N', on receiving the message for the first time reads the contents and rebroadcasts it. Afterward 'N' discards any duplicate receptions of the message. This guarantees that the flooding is loop-free.
-The path of receive algorithm that deals with FLOOD packets is depicted in algorithm \ref{flood_recv}
+The primitive allows to restrict the span of flooding by the HTL parameter. For example, if a source node `S' wants to send a message to all its immediate neighbors (i.e. in direct radio range) then `S' shall set the HTL value to 1 in the header.
 
+The part of receive algorithm that deals with FLOOD packets is depicted in algorithm \ref{flood_recv}
 
 \begin{algorithm}
 \caption{Receive(msg): Flood} 
 \label{flood_recv}
 \DontPrintSemicolon
-\SetKwProg{Flood}{Flood}{}{}
-\Flood{(msg)}{%
+\SetKwProg{Receive}{Receive}{}{}
+\Receive{(msg)}{%
+    \If{msg.pId $\in$ transmittedMsgIdSet}{
+        discard(msg)\;
+        EXIT\;
+    }
     \eIf {msg.destId == FLOOD}{
         \eIf{msg.pId $\notin$ seenIdSet} {
             msg.HTL = msg.HTL - 1\;
@@ -143,78 +179,91 @@ The path of receive algorithm that deals with FLOOD packets is depicted in algor
 
 \end{algorithm}
 
+\paragraph{Geocast}
 
-\textbf{Geocast}
+Geocast is used when a UAV wants to communicate with any node present in a geographic region. This is useful in scenarios where two nodes with a conflicting path and need to communicate to negotiate the path. The underlying mechanism of geocast is flooding but we restrict the flooding to a specific `zone' i.e. if an intermediate node happens to be in that `zone' then only the intermediate node shall re-transmit that message.  
 
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=1\textwidth]{Chapter-3/figs/Spheroid}
+\caption{Transmission zone with source at sLoc and destination at dLoc}
+\label{fig:spheroid}
+\end{figure}
 
-When a source node 'S' needs to send a message to \emph{any} node in a spherical region 'R' with center at \emph{'dLoc'} and radius \emph{'r'} it chooses an appropriate width 'w' and creates a header with the following parameters.
+\textbf{Transmission Zone:} Consider source node `S' (at \emph{sLoc}) needs to send a message to a destination location \emph{dLoc}. The source node will first create a message (\emph{msg}) and defines a volume in the form of a spheroid with \emph{msg.sLoc} and \emph{msg.dLoc} as the two foci points and parameter \emph{msg.w} as the minor-axis length. An intermediate node `N' forwards this \emph{msg} if and only if `N' lies inside the spheroid defined by the \emph{msg} parameters. This idea of constrained flooding is derived from the concept of the petal in \cite{6133499} and that of request zone in \cite{Ko:1998:LRM:288235.288252}. To increase reliability, the source node can increase the parameter transmission zone's width \emph{msg.w}.
+
+A sample depiction of transmission zone is depicted in \fref{fig:spheroid} where sLoc and dLoc are the foci points and `w' is the length of the minor axis.
+
+When a source node `S' needs to send a message to \emph{any} node in a spherical region `R' with center at \emph{`dLoc'} and radius \emph{`r'} then `S' chooses an appropriate width `w' and creates a header with the following parameters.
 \begin{eqnarray*}
-header = & messageHeader(destId = ANY, dLoc = [x,y,z], radius = r,\\
-    & update = IGNORE, width = w, ackReq = FALSE)
+& header = & messageHeader(destId = ANY, dLoc = [x,y,z], radius = r,\\
+&    & update = IGNORE, width = w, ackReq = FALSE)
 \end{eqnarray*}
-Source node `S' then encapsulates the data in this header and transmits the packet.
+Source node `S' then encapsulates the data in this header and transmits the packet. An intermediate node `N' processes the message according to the algorithm presented in \ref{geocast_recv}
 
 \begin{algorithm}
-\SetAlgoLined
+\caption{Receive(msg): Geocast} 
+\label{geocast_recv}
 \DontPrintSemicolon
-\If{msg.pId is in transmittedMsgIdSet}{
-    discard(msg)\;
-    EXIT\;
-}
-\If{msg.destId == ANY}{
-    \If{insideDestinationRegion(msg, myLoc)}{
-        Transmit(msg)\;
-        Add msg.pId to transmittedMsgIdSet\;
+\SetKwProg{Receive}{Receive}{}{}
+
+\Receive{(msg)}{
+    \If{msg.pId $\in$ transmittedMsgIdSet}{
+        discard(msg)\;
         EXIT\;
     }
-}
-
-\If{insideTransmissionZone(msg, myLoc) == TRUE}{
-    \eIf{msg.pId is in bufWait}{
-        Increase duplicate count for msg.pId\; 
-        save msg.tLoc\;
-    }{
-        boffTime = calculateBoffTime(msg)\;
-        add msg to bufWait \;
-        
-        registerCallback(boffTime, msg)\;
+    \If{msg.destId == ANY}{
+        \If{insideDestinationRegion(msg, myLoc)}{
+            Transmit(msg)\;
+            Add msg.pId to transmittedMsgIdSet\;
+            EXIT\;
+        }
+    }
+    \If{insideTransmissionZone(msg, myLoc) == TRUE}{
+        \eIf{msg.pId is in bufWait}{
+            Increase duplicate count for msg.pId\; 
+            save msg.tLoc\;
+        }{
+            boffTime = calculateBoffTime(msg)\;
+            add msg to bufWait \;
+            
+            registerCallback(boffTime, msg)\;
+        }
     }
 }
-
-\caption{Receive(msg): Geocast} \label{geocast_recv}
 \end{algorithm}
 
-\textbf{Unicast}
+\paragraph{Unicast}
 
-When a source node 's' needs to send a message to destination node 'D' then 'S' first consults its location table for the location of destination 'D' and creates a header with the following parameters.
+Unicast is used when a source node `s' needs to send a message to a destination node `D'. Unicast uses the same underlying mechanism as geocast to route a message except that `S' first consults its location table for `dLoc' - the location of destination `D' - and creates a header with the following parameters.
 
 \begin{eqnarray*}
-header = & messageHeader(destId = destID, dLoc = [x,y,z], radius = IGNORE,\\
-    & update = IGNORE, width = w, ackReq = FALSE)
+& header = & messageHeader(destId = destID, dLoc = dLoc,\\
+&    & radius = IGNORE, update = IGNORE, width = w, \\
+& & ackReq = FALSE)
 \end{eqnarray*}
 
 Source node `S' then encapsulates the data in this header and transmits the packet.
-
-On the receiving side the node 'N' follows the following algorithm.
+An intermediate receiving node `N' follows the algorithm \ref{unicast_recv}.
 
 \begin{algorithm}
-\SetAlgoLined
-{...\;}
-\eIf{msg.destId = myId}{
-    \If{msg.ackReq == TRUE}{
-        ackRep = prepareAckReply()\;
-        send(ackRep);
-    } 
-}{
-...
+\caption{Receive(msg): Unicast} 
+\label{unicast_recv}
+\DontPrintSemicolon
+\SetKwProg{Receive}{Receive}{}{}
+\Receive{(msg)}{
+    \If{msg.pId $\in$ transmittedMsgIdSet}{
+        discard(msg)\;
+        EXIT\;
+    }
+    \eIf{msg.destId = myId}{
+        \If{msg.ackReq == TRUE}{
+            ackRep = prepareAckReply()\;
+            send(ackRep);
+        } 
+    }
+    {
+        algorithm \ref{geocast_recv}
+    }
 }
-\caption{Receive: Unicast} \label{unicast_recv}
 \end{algorithm}
-
-\paragraph{Discussion - ROUGH}
-
-Our routing algorithm doesn't maintain or exchange any topology graph hence it neither needs to exchange control information nor it has to do the computation heavy path calculations.
-
-Moreover, our algorithm doesn't do a route discovery, which eliminates the typical delay associated with reactive routing algorithms. 
-
-Our algorithm is robust i.e. the messages are routed through geo-diffuse pathsets and matches the delivery rate of flooding.
