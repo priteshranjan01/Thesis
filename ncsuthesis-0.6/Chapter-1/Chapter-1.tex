@@ -1,4 +1,4 @@
-\chapter{INTRODUCTION}
+\chapter{Introduction}
 \label{chap-one}
 \section{Aerial networks and the challenges}
 
@@ -23,7 +23,11 @@ In other words, the requirements from a FANET changes from application to applic
 
 There is a rich literature of work on routing protocols for MANETs. Some of the protocols have proposed to extend the traditional protocols of table-based routing in a proactive (keeping redundant paths or continuously checking on link quality) or reactive (find a route when needed) or hybrid (proactive inside a zone and reactive between zones) manner. Other efforts have proposed routing protocols that make use of geographical locations of the nodes. While geographical routing protocols have been experimentally shown to be more scalable and robust than topology-based protocols for MANETs, geographical routing protocols are still not directly applicable to aerial networks where the height of the network is more than the transmission radius of the nodes. This is because some of the key concepts in 2D geographic routing either do not apply in 3D networks or are computationally expensive \cite{6238283}.
 
+\section{Problem statement}
+
 In this thesis, we study the problem of routing packets in an aerial three-dimensional ad-hoc network with highly mobile nodes, where maintaining network topology either proactively or reactively is not feasible. Our approach is to use the inherently broadcast nature of the wireless medium as an advantage by making the intermediate nodes do an `opportunistic' forwarding towards the destination node or region. We have studied the qualitative and quantitative requirements from a network for the plume wrapping and tracking problem \cite{8080382}, as a sample application of autonomous multi-UAV missions. We present an extended version of our previous work on geographic routing that we called `Petal Routing \cite{6133499}' and its applicability to the plume wrapping and tracking mission at hand. We show that our proposed protocol matches the reliability of a network-wide flooding algorithm while significantly reducing the overhead. Finally, we present a formal analysis of the protocol's performance based on metrics like average end-to-end delay, transmission overhead, average number of hops, delivery ratio, the effect of network density.
 
 
-\section{Organization} 
+\section{Thesis Organization} 
+
+The rest of this thesis is organized as follows. Chapter 2 introduces aerial networks its characteristics, applications and some of the popular routing techniques related to them. In chapter 3 we have laid out the plume tracking mission and the requirements from a communication viewpoint, thereafter we have presented our routing scheme. In chapter 4, we present our extensions in QrSim to implement multi-ho routing. Thereafter, in chapter 5 we have studied the performance of our algorithm on various metrics and evaluated whether they fit in the requirements as charted in chapter 3. Finally, we present the conclusions and discuss some of the possible improvements.

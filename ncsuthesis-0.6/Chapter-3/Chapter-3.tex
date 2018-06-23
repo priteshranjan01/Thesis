@@ -5,7 +5,7 @@ Each multi-UAV mission has its own set of requirements in terms of size and numb
 
 The use of multi-cluster UAVs to track gas plumes like volcanic eruptions, forest fires, and environmental contamination has increased in the previous decade. The network requirement from a FANET depends on the mission. For example, in a plume tracking mission, the UAVs would be required to wrap around the plume, report the contamination level and possibly move with the plume. Once the UAVs have been deployed they have complete device autonomy (i.e. each UAV decides its future waypoints and velocity itself using the inputs of onboard sensors and don't need these instructions from a human operator) and mission autonomy (i.e. the UAVs must cooperate and coordinate with each other for the successful completion of the mission). It should also be noted that although the UAVs coordinate in the decision-making process, a network-wide consensus is not required for a specific UAVs operation. As the plume moves in time and space the UAVs should evenly spread out on the surface of the plume while maintaining a safe distance from each other and avoiding any static or dynamic obstacle in their path. 
 
-A detailed description of the problem and a multi-UAV distributed solution has been provided in \cite{8080382}. In the proposed solution the authors have assumed that the mission starts with an initial formation of drones in a 2-dimensional grid (shown in \fref{fig:mesh_formation}). Thereafter, the UAVs move towards the plume autonomously without any ground support. Whenever a UAV detects a contamination it stops and maintains its position with respect to the plume while rest of the UAVs continue their search. If the inter-UAV distance crosses a threshold (too close or too far away) then the moving drone tries to move further or closer to the stationary UAV. These inter-drone forces maintain an approximate mesh structure while resulting in the UAVs wrapping around the plume. As an aid to visualizing this process, think of the mesh as a piece of cloth moving towards a spherical ball and eventually wrapping around the ball. \fref{YYY} shows an intermediate state with drones wrapping around the plume and \fref{fig:final_state} shows a desired final state of UAVs wrapped around the plume.
+A detailed description of the problem and a multi-UAV distributed solution has been provided in \cite{8080382}. In the proposed solution the authors have assumed that the mission starts with an initial formation of drones in a 2-dimensional grid (shown in \fref{fig:mesh_formation}). Thereafter, the UAVs move towards the plume autonomously without any ground support. Whenever a UAV detects a contamination it stops and maintains its position with respect to the plume while rest of the UAVs continue their search. If the inter-UAV distance crosses a threshold (too close or too far away) then the moving drone tries to move further or closer to the stationary UAV. These inter-drone forces maintain an approximate mesh structure while resulting in the UAVs wrapping around the plume. As an aid to visualizing this process, think of the mesh as a piece of cloth moving towards a spherical ball and eventually wrapping around the ball. \fref{fig:intermediate_state} shows an intermediate state with drones wrapping around the plume and \fref{fig:final_state} shows a desired final state of UAVs which are wrapped around the plume.
   
 
 \begin{figure}[hbtp]
@@ -13,6 +13,13 @@ A detailed description of the problem and a multi-UAV distributed solution has b
 \includegraphics[width=0.8\textwidth]{Chapter-3/figs/initial_drone_config}
 \caption{Mesh formation of UAVs at the start of the mission}
 \label{fig:mesh_formation}
+\end{figure}
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=0.8\textwidth]{Chapter-3/figs/intermediate_state}
+\caption{UAVs wrapping around the plume. The trailing lines mark the trajectory followed by the UAVs.}
+\label{fig:intermediate_state}
 \end{figure}
 
 \begin{figure}[hbtp]
@@ -36,7 +43,7 @@ In this section, we shall outline the qualitative and quantitative requirements 
 
 \textbf{Number of nodes:} The number of UAVs required in a mission depends on the mission area, transceiver characteristics and the type of nodes employed. Assuming off-the-shelf Wi-fi transceivers and the above mentioned mission coverage the required number of nodes would be around 30. 
 
-\textbf{Connectivity to a base station:} In a real-life deployment scenario, the UAVs must be connected to a base station for safety and security purposes, although the data-rate requirement of the link can be mission specific. In our case, the UAVs need to send their telemetry information (GPS and IMU data) to the base station, however since the mission is fully autonomous with distributed decision-making capacity the entities don’t need to relay the coordination data to the base station. A frequency of 4-5 Hz or less is the standard for telemetry data exchange \cite{7463007}. 
+\textbf{Connectivity to a base station:} In a real-life deployment scenario, the UAVs must be connected to a base station for safety and security purposes, although the data-rate requirement of the link can be mission specific. In our case, the UAVs need to send their telemetry information (GPS and IMU data) to the base station, however since the mission is fully autonomous with distributed decision-making capacity the entities don't need to relay the coordination data to the base station. A frequency of 4-5 Hz or less is the standard for telemetry data exchange \cite{7463007}. 
 
 \textbf{Connectivity between the other UAVs:} Since the UAVs are required to maintain an approximate mesh structure they need to approximate the distance with other drones. Therefore, the UAVs need to update each other of their GPS locations in real-time. A suitable frequency of this data exchange could be 4-5 Hz. Also, in real deployment scenarios, the UAV cluster can be composed of drones with varying capabilities (UAVs have different sensors) which demands a need for one-to-one communication. Therefore, the UAVs must have a reliable connectivity to each other in either a single or multi-hop fashion. 
 
@@ -79,14 +86,75 @@ Traffic type & periodic and real time (coordination data, telemetry data), delay
 \end{tabular}
 \end{table}
 
-\section{Routing protocol} \label{routing_protocol}
+\section{Routing protocol} 
+\label{routing_protocol}
 
 \textbf{Content: Discuss the location service employed to get destination location, packet header, message primitives and packet routing strategy.}
 
 \textbf{Intent: Explain how a node knows the location of the destination node, and when a node transmits a received message.
 }
 
-In this section, we shall first discuss our underlying assumptions in presenting our routing scheme, the packet header and then we shall discuss the message primitives derived from the communication requirements presented in section \ref{comm_reqs}.  
+\subsection{Protocol description} 
+\label{protocol_description}
+
+As we discussed in chapter \ref{chap-two}, proactively or reactively maintaining routes in tables is not a suitable solution for routing between highly mobile FANET nodes. Therefore a routing scheme which does not employ a next-hop forwarding would be more robust. On the other hand, a routing scheme that always floods a packet (nodes discard duplicate receptions to avoid routing loops) in the network doesn't need to maintain any information and is highly robust (i.e. flooding guarantees delivery if the destination node is reachable). However, the overhead associated makes it unsuitable for large and frequent data transfers. 
+
+ A key observation that reduces the number of re-transmissions in flooding is that every node in the network doesn't need to forward a packet for successful delivery; provided some nodes which lie in the direction of the destination node have received and transmitted the packet. For example in \fref{}, with source node `S' and destination node `D' the nodes with \emph{black} dots don't need to transmit if the nodes with \emph{red or green} dots have received and transmitted the packet. It should be noted that the red and green dots are closer to the straight line connecting the source and destination node as compared to the black nodes. In this regard we signify the volume enclosing these \emph{`more relevant'} nodes as the \textbf{`transmission zone'}. Therefore, if a source node `S' knows the location of a destination node `D' then `S' can define a transmission zone and restrict re-transmissions to the nodes which lie in the zone, thereby reducing the overhead without compromising the reliability. This idea of constrained flooding is derived from the concept of the petal in \cite{6133499} and that of request zone in \cite{Ko:1998:LRM:288235.288252}. 
+
+These `transmission zones' can be defined as different shapes, for example a cuboid or a cylinder or a spheroid \fref{}. In other words our routing scheme is a restricted flooding algorithm that reduces the overhead by restricting the re-transmissions to a volume between the source and destination nodes. 
+
+We also observe that there is an opportunity to further reduce the number of retransmissions. For example in \fref{} if all the nodes with red dots receive and transmit the packets then even if the nodes with green dots don't re-transmit, the packets shall be successfully delivered to the destination. It should be noted that the red nodes are closer to the source-destination line and also closer to the destination node as compared to the green nodes. This `opportunistic' selection of the nodes can be achieved by introducing a \textbf{`back-off and re-transmit'} mechanism. Specifically, when an intermediate node `N' receives a packet `p', then `N' calculates a `$B_{off}$' time, appends the packet in a waiting queue and registers a callback for the expiry of `$B_{off}$' time. In the meanwhile `N' registers the locations from where `N' heard duplicate transmissions of `p'. After `$B_{off}$' has expired, the node `N' calculates the centroid of duplicate retransmitting locations and if the centroid is closer to the destination then `N' drops the packet otherwise `N' re-transmits the packet. The algorithm to calculate the `back-off' time is presented in section \ref{}.
+
+\begin{algorithm}
+\caption{Schedule received packet: Petal Routing} 
+\label{packet_scheduling}
+\DontPrintSemicolon
+\SetKwProg{Schedule}{Schedule}{}{}
+
+\Schedule{(pkt)}{
+    \If{pkt.pId $\in$ transmittedPktIdSet}{
+        discard(pkt)\;
+        EXIT\;
+    }
+    
+    \If{insideTransmissionZone(pkt, myLoc) == TRUE}{
+        \eIf{pkt.pId is in bufWait}{
+            Increase duplicate count for pkt.pId\; 
+            save pkt.tLoc\;
+        }{
+            boffTime = calculateBoffTime(pkt)\;
+            add pkt to bufWait \;
+            
+            registerCallback(boffTime, pkt)\;
+        }
+    }
+}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Transmit or Drop packet: Petal Routing call-back handler} 
+\label{call_back_handler}
+\DontPrintSemicolon
+\SetKwProg{TransmitOrDrop}{TransmitOrDrop}{}{}
+\TransmitOrDrop{(pkt)}{
+    dupCoords = duplicateTransmissionCoordinates(pkt)\;
+    \eIf {length(dupCoords) > nodeDensity * boundary(dupCoords)}{
+        centroid = centroid(dupCoords)\;
+        \If{distance(myLoc, pkt.dLoc) < distance(centroid, pkt.dLoc)}{
+            discard(pkt)\;
+        } {
+            pkt.tLoc = myLoc\;
+            transmit(pkt)\;
+        }
+    }{
+        pkt.tLoc = myLoc\;
+        transmit(pkt)\;
+    }
+    Add pkt.pId to transmittedPktIdSet\;
+}
+\end{algorithm}
+
+To this extent, following are the assumptions underlying our routing scheme:
 
 \textbf{Assumptions:}
 \begin{enumerate}
@@ -97,24 +165,8 @@ In this section, we shall first discuss our underlying assumptions in presenting
 \item A source node knows an approximate location of the destination node which is maintained in a location table and provided by a location service. Different implementations of a location service have been mentioned in section \ref{loc_service} and our implementation has been explained in section \ref{loc_service_impl}. 
 \end{enumerate}
 
-\subsection{Packet Header} \label{packet_header}
-We first define the packet header that the source node attaches to the payload.
-\begin{itemize}
-\item Packet ID (\emph{pId}): A number that uniquely identifies this packet among those transmitted by this node. The combination of source node identification and packet ID should uniquely identify a packet in the FANET. 
-\item Source Node ID (\emph{srcId}): A unique identifier for the source node. It could be IP address of the node.
-\item Source Location (\emph{sLoc}): The GPS coordinate of the source node.
-\item Destination Node ID (\emph{destId}): A unique identifier for the destination node. If a packet is destined to a geographical region, then this shall be set to the macro ANY. If a packet is to be flooded in the network, then this value should be set to the macro FLOOD. 
-\item Destination Location (\emph{dLoc}): GPS coordinate of the destination as known to the source node. In case of flood packet, this would be set to NULL or be ignored. 
-\item Radius (\emph{r}): In case of a geocast packet, the radius along with dLoc defines the destination spherical region for the packet.
-\item Transmitter ID (\emph{trId}): A unique identifier for the latest transmitter of the packet.
-\item Transmitter Location (\emph{trLoc}): GPS coordinate of the node that had last transmitted the packet.
-\item Timestamp (\emph{timestamp}): The time when this packet was transmitted by the source.
-\item Width (\emph{w}): The width of the transmission zone for the packet. Explained later in this section.
-\item Hops To Live (\emph{HTL}): A node forwards a message only if HTL > 0 and reduces HTL by 1 before forwarding the packet. 
-\item Acknowledgement Required (\emph{ackReq}): This flag denotes whether the source node is expecting an \emph{ack} reply.
-\item Update Allowed (\emph{update}): This flag denotes whether an intermediate node can update the message headers. For example, if the intermediate node has a location update that is later than the message's \emph{timestamp}.
+In a nut-shell, our routing scheme benefits from the inherently broadcast wireless medium and restricts the re-transmissions to a specific volume around the source - destination line and cancelling out redundant transmissions in the process. This routing scheme is presented algorithm \ref{packet_scheduling} and \ref{call_back_handler}. A 2D equivalent of our routing scheme is presented in \cite{6133499} and the routing scheme is termed as `petal routing'. Although, all our references are in 3 dimensions, we shall continue the same nomenclature and refer our 3D routing scheme as `Petal routing'.
 
-\end{itemize}
 
 \subsection{Message primitives} \label{message_primitives}
 
@@ -138,15 +190,13 @@ We will now present a high-level algorithmic description of these message primit
 
 \paragraph{Flood}
 
-Flood primitive is ensures that the packet shall be received by all the nodes that are connected. When a source node `S' needs to send a message to every node in the network, it creates a header with the following parameters and encapsulates the data in this header.
+Flood primitive ensures that the packet shall be received by all the nodes that are reachable. When a source node `S' needs to send a message to every node in the network, it creates a header with the following parameters and encapsulates the data in this header.
 
 \begin{eqnarray*}
-& header = & messageHeader(destId = FLOOD, dLoc = IGNORE, \\
-&    & radius = IGNORE, pdate = IGNORE, width = IGNORE, \\
-&    & ackReq = FALSE, HTL = NETWORK\textunderscore DIAMETER)
+& header = &Header(destId = FLOOD, HTL = NETWORK\textunderscore DIAMETER)
 \end{eqnarray*} 
 
-Node `S' then broadcasts this message to all its neighbors in the wireless medium. An intermediate node 'N', on receiving the message for the first time reads the contents and rebroadcasts it. Thereafter, `N' discards any duplicate receptions of the message. This guarantees that the flooding is loop-free. The benefit of Flooding is the protocol's robustness however there is a high overhead associated with flooding and hence it is suitable for small packets only.
+Node `S' then broadcasts this message to all its neighbors in the wireless medium. An intermediate node `N', on receiving the message for the first time reads the contents and rebroadcasts it. Thereafter, `N' discards any duplicate receptions of the message. This guarantees that the flooding is loop-free. The benefit of Flooding is the protocol's robustness however there is a high overhead associated with flooding and hence it is suitable for small packets only.
 
 The primitive allows to restrict the span of flooding by the HTL parameter. For example, if a source node `S' wants to send a message to all its immediate neighbors (i.e. in direct radio range) then `S' shall set the HTL value to 1 in the header.
 
@@ -181,23 +231,12 @@ The part of receive algorithm that deals with FLOOD packets is depicted in algor
 
 \paragraph{Geocast}
 
-Geocast is used when a UAV wants to communicate with any node present in a geographic region. This is useful in scenarios where two nodes with a conflicting path and need to communicate to negotiate the path. The underlying mechanism of geocast is flooding but we restrict the flooding to a specific `zone' i.e. if an intermediate node happens to be in that `zone' then only the intermediate node shall re-transmit that message.  
+Geocast is used when a UAV wants to communicate with any node present in a geographic region. This is useful in scenarios where two nodes detect a conflicting path and need to negotiate their way around each other.  
 
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=1\textwidth]{Chapter-3/figs/Spheroid}
-\caption{Transmission zone with source at sLoc and destination at dLoc}
-\label{fig:spheroid}
-\end{figure}
+When a source node `S' needs to send a message to \emph{any} node in a spherical region `R' with center at \emph{`dLoc'} and radius \emph{`r'} then `S' creates a header with the following parameters.
 
-\textbf{Transmission Zone:} Consider source node `S' (at \emph{sLoc}) needs to send a message to a destination location \emph{dLoc}. The source node will first create a message (\emph{msg}) and defines a volume in the form of a spheroid with \emph{msg.sLoc} and \emph{msg.dLoc} as the two foci points and parameter \emph{msg.w} as the minor-axis length. An intermediate node `N' forwards this \emph{msg} if and only if `N' lies inside the spheroid defined by the \emph{msg} parameters. This idea of constrained flooding is derived from the concept of the petal in \cite{6133499} and that of request zone in \cite{Ko:1998:LRM:288235.288252}. To increase reliability, the source node can increase the parameter transmission zone's width \emph{msg.w}.
-
-A sample depiction of transmission zone is depicted in \fref{fig:spheroid} where sLoc and dLoc are the foci points and `w' is the length of the minor axis.
-
-When a source node `S' needs to send a message to \emph{any} node in a spherical region `R' with center at \emph{`dLoc'} and radius \emph{`r'} then `S' chooses an appropriate width `w' and creates a header with the following parameters.
 \begin{eqnarray*}
-& header = & messageHeader(destId = ANY, dLoc = [x,y,z], radius = r,\\
-&    & update = IGNORE, width = w, ackReq = FALSE)
+& header = & Header(destId=ANY, dLoc=[x,y,z], radius=r)
 \end{eqnarray*}
 Source node `S' then encapsulates the data in this header and transmits the packet. An intermediate node `N' processes the message according to the algorithm presented in \ref{geocast_recv}
 
@@ -206,28 +245,18 @@ Source node `S' then encapsulates the data in this header and transmits the pack
 \label{geocast_recv}
 \DontPrintSemicolon
 \SetKwProg{Receive}{Receive}{}{}
-
 \Receive{(msg)}{
     \If{msg.pId $\in$ transmittedMsgIdSet}{
         discard(msg)\;
         EXIT\;
     }
     \If{msg.destId == ANY}{
-        \If{insideDestinationRegion(msg, myLoc)}{
+        \eIf{insideDestinationRegion(msg, myLoc)}{
             Transmit(msg)\;
-            Add msg.pId to transmittedMsgIdSet\;
+            Add msg.pId to transmittedPktIdSet\;
             EXIT\;
-        }
-    }
-    \If{insideTransmissionZone(msg, myLoc) == TRUE}{
-        \eIf{msg.pId is in bufWait}{
-            Increase duplicate count for msg.pId\; 
-            save msg.tLoc\;
         }{
-            boffTime = calculateBoffTime(msg)\;
-            add msg to bufWait \;
-            
-            registerCallback(boffTime, msg)\;
+            algorithm \ref{packet_scheduling}
         }
     }
 }
@@ -235,12 +264,10 @@ Source node `S' then encapsulates the data in this header and transmits the pack
 
 \paragraph{Unicast}
 
-Unicast is used when a source node `s' needs to send a message to a destination node `D'. Unicast uses the same underlying mechanism as geocast to route a message except that `S' first consults its location table for `dLoc' - the location of destination `D' - and creates a header with the following parameters.
+Unicast is used when a source node `S' needs to send a message to a destination node `D'. Unicast uses the same underlying mechanism as geocast to route a message except that `S' first consults its location table for `dLoc' - the location of destination `D' - and creates a header with the following parameters.
 
 \begin{eqnarray*}
-& header = & messageHeader(destId = destID, dLoc = dLoc,\\
-&    & radius = IGNORE, update = IGNORE, width = w, \\
-& & ackReq = FALSE)
+& header = & Header(destId = destID, dLoc = dLoc)
 \end{eqnarray*}
 
 Source node `S' then encapsulates the data in this header and transmits the packet.
@@ -263,7 +290,7 @@ An intermediate receiving node `N' follows the algorithm \ref{unicast_recv}.
         } 
     }
     {
-        algorithm \ref{geocast_recv}
+        algorithm \ref{packet_scheduling}
     }
 }
 \end{algorithm}

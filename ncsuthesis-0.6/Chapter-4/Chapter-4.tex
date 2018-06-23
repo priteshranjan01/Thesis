@@ -79,9 +79,9 @@ Transmission Frequency (f) & 2400 MHz \\
 \midrule
 Standard Deviation ($\sigma$) & 2\\
 \midrule
-Receiver Antenna Gain (gTx) & 0 dBm\\
+Receiver Antenna Gain ($GT_x$) & 0 dBm\\
 \midrule
-Transmitter Antenna Gain & 0 dBm \\
+Transmitter Antenna Gain ($GR_x$) & 0 dBm \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -95,15 +95,16 @@ The function to get the signal strength at the destination is algorithm \ref{sig
 \SetKwInOut{Output}{output}
 \SetKwProg{signalStrength}{signalStrength}{}{}
 
-\signalStrength{(T, f, d, gTx, gRx)}{
+\signalStrength{(T, f, d, $GT_x$, $GR_x$)}{
     \Output{residualStrength: dBm}
-    fspl = $ 20 \times \log_{10}(\dfrac{d}{1000}) + 20 \times log_{10}(f) + 32.44 - gTx - gRx$\;
+    fspl = $ 20 \times \log_{10}(d) + 20 \times log_{10}(f) + 32.44  - GT_x - GR_x$ \;
     
     mean = 0\;
     sigma = 2\;
     N = normrnd(mean, sigma)\;
     residualStrength = T - fspl + N\;
 }
+
 \end{algorithm} 
 
 
@@ -126,6 +127,26 @@ The setup in \fref{fig:proc_delay_setup} is similar to the configuration propose
 \end{figure}
 
 A sample plot of round trip time over 1000 iterations is shown in \fref{fig:proc_delay_graph}. It becomes evident that the total message processing delay is much smaller to the time step. Hence, in our simulation, a message transmitted in the time quantum `x' is also received in the same time quantum `x'.
+
+\subsection{Packet Header} \label{packet_header}
+We first define the packet header that the source node attaches to the payload.
+\begin{itemize}
+\item Packet ID (\emph{pId}): A number that uniquely identifies this packet among those transmitted by this node. The combination of source node identification and packet ID should uniquely identify a packet in the FANET. 
+\item Source Node ID (\emph{srcId}): A unique identifier for the source node. It could be IP address of the node.
+\item Source Location (\emph{sLoc}): The GPS coordinate of the source node.
+\item Destination Node ID (\emph{destId}): A unique identifier for the destination node. If a packet is destined to a geographical region, then this shall be set to the macro ANY. If a packet is to be flooded in the network, then this value should be set to the macro FLOOD. 
+\item Destination Location (\emph{dLoc}): GPS coordinate of the destination as known to the source node. In case of flood packet, this would be set to NULL or be ignored. 
+\item Radius (\emph{r}): In case of a geocast packet, the radius along with dLoc defines the destination spherical region for the packet.
+\item Transmitter ID (\emph{trId}): A unique identifier for the latest transmitter of the packet.
+\item Transmitter Location (\emph{trLoc}): GPS coordinate of the node that had last transmitted the packet.
+\item Timestamp (\emph{timestamp}): The time when this packet was transmitted by the source.
+\item Width (\emph{w}): The width of the transmission zone for the packet. Explained later in this section.
+\item Hops To Live (\emph{HTL}): A node forwards a message only if HTL > 0 and reduces HTL by 1 before forwarding the packet. 
+\item Acknowledgement Required (\emph{ackReq}): This flag denotes whether the source node is expecting an \emph{ack} reply.
+\item Update Allowed (\emph{update}): This flag denotes whether an intermediate node can update the message headers. For example, if the intermediate node has a location update that is later than the message's \emph{timestamp}.
+
+\end{itemize}
+
 
 \subsection{Message transmission}
 
@@ -213,6 +234,7 @@ The UAVs are initially arranged in a grid and then this grid is maintained durin
 \label{fig:force_fn}
 \end{figure}
 
+
 \subsection{Location service} \label{loc_service_impl}
 
 For the geographical routing protocols to work successfully, the source node needs to know the geo-location (or an approximation) of the destination location. To provide this information we need a service that maintains and distributes the location table. Some of the proposed location service algorithms have been mentioned in section \ref{loc_service}. In our simulation we have implemented an all-for-all location service i.e. every node maintains the location information of every other node in the network. 
@@ -227,10 +249,88 @@ However, in \cite{Basagni:1998:DRE:288235.288254} the authors have associated an
 
 \subsection{Transmission Zone}
 
-The idea behind our routing algorithm is to restrict retransmissions to only those nodes that are inside a region. We have chosen a spheroid volume with sLoc(p, q, r) and dLoc(a, b, c) as their foci points and msg.w as its minor axis length. An intermediate node `N(x, y, z)' shall forward a message if and only if N is inside the spheroid. We check for this condition using the definition of the ellipsoid `The sum of the distances to the two foci points is constant for every point on the curve.'
+As detailed in section \ref{routing_protocol} the idea behind our routing algorithm is to restrict retransmissions to only those nodes that are inside a region. Among the choices presented in section \ref{protocol_description} we have chosen a spheroid volume as our transmission zone because such a volume is a generalization of the other three, provides a tapered region and gives equal significance to nodes at the same distance from the `source - destination' line. As depicted in fig \fref{fig:spheroid} the spheroid has sLoc(p, q, r) and dLoc(a, b, c) as their foci points and `pkt.w' as its minor axis length. An intermediate node `N(x, y, z)' shall forward a message if and only if N is inside the spheroid. We check for this condition using the definition of the ellipsoid `The sum of the distances to the two foci points is constant for every point on the curve.'
 \begin{equation} \label{ellipsoid_equation}
     distance(N, sLoc) + distance(N, dLoc) == K
 \end{equation}
 
 where $K$ is the length of the major-axis. Hence, if the left hand side of equation \ref{ellipsoid_equation} is $\leq K$ then, the point N is inside the spheroid.
 
+\paragraph{Diffused transmission zone:}
+\label{diffuse_trans_zone}
+We observe that there are at least two scenarios where the above described transmission zone might not contain the intermediate nodes for successful transmission. 
+\begin{enumerate}
+    \item Outdated destination location: As discussed in section \ref{loc_service_impl}, if two UAVs are are multi-hops away then they might not have an exact location of each other rather an approximate location which is a few time-steps old. In those cases the intermediate UAVs might have an updated location information. 
+    
+    \item Routing void: is encountered when there are insufficient nodes close to the `source - destination' line for a successful packet delivery however there are nodes outside the periphery of the transmission zone which can deliver the packets.  
+\end{enumerate}
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=1\textwidth]{Chapter-4/figs/Spheroid}
+\caption{Transmission zone with source at sLoc and destination at dLoc}
+\label{fig:spheroid}
+\end{figure}
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width=1\textwidth]{Chapter-4/figs/diverge_zone}
+    \caption{Diverged transmission zone}
+    \label{fig:diverged_transmission_zone}
+\end{figure}
+
+In these two cases the source node can increase the zone width which has a disadvantage of increasing the number of transmissions. Another approach is to let the intermediate nodes update the packet headers with newer information. For example, in \fref{fig:diverged_transmission_zone}, the source node `S' needs to send a packet to destination node `D'. `S' creates a packet with headers that specify the zone `P-1' around `sLoc - dLoc'. The intermediate nodes `T0' and `T1' know the current location of D and update the packet with headers that specify zones `P-2' and  `P-3'. Afterward `T3' and `T4' receive the packet and being inside the updated zones transmit the packet which is received by the destination D at `dLoc'''. These approach makes the zones to diverge from the original one and hence we will refer to this scheme as \textbf{diverge zone routing}. This approach also helps navigate the routing void with a thinner zone width as compared to the single zone scheme. 
+
+\textbf{Transmission Zone:} Consider source node `S' (at \emph{sLoc}) needs to send a message to a destination location \emph{dLoc}. The source node will first create a message (\emph{msg}) and define a volume in the form of a spheroid with \emph{msg.sLoc} and \emph{msg.dLoc} as the two foci points and parameter \emph{msg.w} as the minor-axis length. An intermediate node `N' forwards this \emph{msg} if and only if `N' lies inside the spheroid defined by the \emph{msg} parameters.
+
+\subsection{Back-off time}
+\label{back_off_time}
+
+We discussed in section \ref{protocol_description}, that the number of transmissions can be further decreased by making the node \emph{back-off} for a certain time and then decide whether to transmit or not. In this section we shall describe the method of calculating the back-off duration. 
+
+
+\begin{figure}[hbtp]
+    \centering
+    \includegraphics[width=1\textwidth]{Chapter-4/figs/back_off_time_calc}
+    \caption{Back-off time calculation}
+    \label{fig:back_off_time_calculation}
+\end{figure}
+
+
+The main goal of back-off calculation is that the node closer to the destination and the source - destination line should transmit first. Therefore, the \emph{backOff} calculation is divided into two parts.
+\begin{itemize}
+    \item tB1 $\rightarrow$ back-off time proportional to the distance from destination. This is bounded above by $tUb1$. 
+    \item tB2 $\rightarrow$ back-off time proportional to the distance from the source - destination line. This is bounded above by $tUb2$.
+\end{itemize}
+
+For example, as depicted in \fref{fig:back_off_time_calculation}, intermediate node T needs to determine the back-off time. Node T uses the displacement across the SD line (i.e. PD) to calculate `tB1' and then uses the distance from SD line (i.e. TP) to calculate `tB2'.
+In case of diverge transmission zone the intermediate node uses the distance from `transmitter - destination' line to calculate `tB2'. This is depicted in algorithm \ref{back_off_time_algo}.
+
+\begin{algorithm}
+\caption{Back-off time calculation at intermediate nodes}
+\label{back_off_time_algo}
+\DontPrintSemicolon
+\SetKwInOut{Output}{output}
+\SetKwProg{BackOff}{BackOff}{}{}
+
+\BackOff{(sLoc, dLoc, tLoc, myLoc, tUb, tUb1, zoneType)}{
+    \Output{backOff seconds}
+    
+    TD' = projection of $\overrightarrow{TD}$ on $\overrightarrow{SD}$\;
+    
+    tB1 = $\dfrac{tUb * TD'}{SD}$\;
+    
+    \eIf {zoneType = SINGLE}{
+        X = sLoc \;
+        }{
+        X=tLoc \;
+    }
+    
+    XP = distance of X from $\overrightarrow{XD}$\;
+    
+    tB2 = $\dfrac{tUb1 * XP}{XD}$\;
+    
+    backOff = tB1 + tB2 \;
+    }
+
+\end{algorithm} 
