@@ -8,10 +8,11 @@ A wireless ad hoc network is a decentralized network of nodes where there is no 
 Flying ad hoc networks are a subset of MANETs and consist of nodes capable of flight. The nodes have high degree of mobility, and the distance between the FANET nodes is larger as compared to MANET nodes. These nodes can be manned airplanes, unmanned guided drones or unmanned unguided drones. The span of the network also varies from few hundred meters to several kilometers. One important distinction about FANETs is that the participating nodes have a common mission and their mobility model depends on the mission \cite{OUBBATI201729}. In this section, we discuss the different characteristics, applications, advantages and challenges of FANETs.
 
 \subsection{FANET Characteristics and Applications}
-\paragraph{FANET Characteristics}
-FANETs differ from MANETs on several properties. Some of them are as follows.
 
-\textbf{Node Type and mobility:} Typical nodes in a FANET would be unmanned aerial vehicles (UAVs) which can be further differentiated based on their size, namely, large, small and mini UAVs \cite{OUBBATI201729}. Their mobility, transmission range, altitude, speed, and energy autonomy depends accordingly on their corresponding sizes. A comparison between these types of UAVs is presented in table \ref{tab:uav_comparison} \cite{OUBBATI201729}.
+\subsubsection{FANET Characteristics}
+FANETs differ from MANETs on several characteristics. Some of them are as follows.
+
+\textbf{Node Type and mobility:} Typical nodes in a FANET would be unmanned aerial vehicles (UAVs) which can be further differentiated based on their size, namely, large, small and mini UAVs \cite{OUBBATI201729}. Their mobility, transmission range, altitude, speed, and energy autonomy depends accordingly on their corresponding sizes. A comparison between these types of UAVs is presented in Table \ref{tab:uav_comparison} \cite{OUBBATI201729}.
 
 \begin{table}
 \caption{Comparison of different type of FANET nodes}
@@ -33,8 +34,8 @@ Energy Autonomy & Restricted (Battery Dependent) & Not Restricted (On-board sola
 
 \textbf{Network Connectivity and QoS requirements:} Depending on the UAV density (number of UAVs is a unit volume) and the node mobility, the connectivity varies. Although the node movement is predefined according to the mission, it can be updated during the mission due to sensor errors, environmental conditions or change of mission altogether. These affect the link quality and efficiency of routing protocols. QoS requirements also differ on a mission basis. Some missions are network delay tolerant while others are not. Depending on the applications, some FANETs can aim to optimize different subsets of QoS parameters like latency, bandwidth, packet loss, jitter etc.
 
-\paragraph{FANET Applications}
-FANETs applications can be grouped into three categories based on the entities in the network and cooperation model among them \cite{BEKMEZCI20131254}.
+
+\subsubsection{FANETs applications} can be grouped into three categories based on the entities in the network and cooperation model among them \cite{BEKMEZCI20131254}.
 
 \textbf{Multi-UAV cooperation:} Certain tasks require the UAVs to autonomously complete the mission in a time limit without human interaction. In such applications, there is no awareness of the ground environment and thereby doesn't need any ground infrastructure. The UAVs cooperate and coordinate according to the predetermined application and correct the flight path in response to the environmental factors and errors. Example applications would include plume wrapping, target detection, monitoring disasters etc. 
 
@@ -42,7 +43,7 @@ FANETs applications can be grouped into three categories based on the entities i
 
 \textbf{UAV-to-VANET collaboration:} In the third kind, the aerial UAVs can communicate and coordinate with vehicles on the ground to accomplice certain tasks. Such applications may require ground infrastructure and human involvement. This type of hybrid ad hoc network is a relatively new kind of wireless communication. Examples include route guidance, traffic monitoring, data packet delivery etc.
 
-The above information is summarized in table \ref{tab:uav_applications}
+The above information is summarized in Table \ref{tab:uav_applications}
 
 \begin{table}
 \caption{UAV Applications}
@@ -87,7 +88,7 @@ These approaches route packets based on the geographic position of the destinati
 
 Position-based routing protocols are generally classified on two properties, `location service' and `forwarding strategy'.
 
-\paragraph{Location Services} \label{loc_service}
+\subsubsection{Location Services} \label{loc_service}
 Besides their own location, the nodes may need to know the location of destination nodes. Most position-based routing protocols employ a location service to maintain and distribute the location of a node. The location services can be classified based on the number of nodes that maintain the location information and for the number of nodes for which the location servers maintain the information. Thereby, the four possible combinations can be \cite{967595}
 
 \textbf{Some-for-some:} Some nodes in the network maintain and provide the location information for some of the nodes.
@@ -99,7 +100,7 @@ Besides their own location, the nodes may need to know the location of destinati
 \textbf{All-for-some:} All nodes maintain the location information for a subset of the nodes. 
 Moreover, there are different methods to distribute location information. A few of the proposed methods are flooding \cite{Basagni:1998:DRE:288235.288254}, grid location service \cite{Li:2000:SLS:345910.345931} and quorum-based location service \cite{769770}.
 
-\paragraph{Forwarding Strategies}
+\subsubsection{Forwarding Strategies}
 After a node has obtained the location of the destination node, there needs to be a forwarding/routing strategy to deliver the packet. Forwarding strategies in geographical routing can be grouped as follows:
 
 \textbf{Greedy forwarding} Assuming a source node S needs to send a packet to a destination node D, where S and D are not in the direct transmission range of each other, node S will pick an intermediate node T from among the nodes in the transmission range of node S such that T is the closer to node D than S. Node T will follow the same procedure until a penultimate node which had D in its direct transmission range receives the packet and forwards the packet to D. 
@@ -112,10 +113,6 @@ Greedy routing strategies are guaranteed to be loop-free (since the packet never
 Another approach that doesn't use either one of these approaches was presented in Location Aided Routing \cite{Ko:1998:LRM:288235.288252}. This approach determines a `request zone' and an `expected zone' according to the packet parameters and then forwards the packet in that region.
 
 \section{Routing in 3D ad hoc networks}
-
-\textbf{Content}: Difference between 2D and 3D networks and the applicability of the 2D geographical routing approaches in 3D networks, and some proposed 3D geographical routing approaches.
- 
-\textbf{Intent}: Convince the reader that 2D geographical routing protocols are not directly applicable to 3D networks and introduce some of the proposed 3D geographical routing approaches.
 
 FANETs are characterized by high mobility which leads to a frequent change in the underlying terrains. Not only this may introduce frequent topology changes but also terrain-induced blind spots which affect the wireless channel. The wireless channel is also affected by the antenna orientation - which changes frequently due to high mobility - and thereby causes link fluctuations. Moreover, communication requirements in a FANET are mission specific and can widely vary from one type to another. For example, in a search and rescue mission, the information should be transmitted to the base station in real-time while some surveillance missions might choose to gather and store on board and delivering it to the base after the mission has completed or in batches.
 

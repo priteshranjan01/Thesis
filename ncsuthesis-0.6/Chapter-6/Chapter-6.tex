@@ -1,3 +1,8 @@
 \chapter{Conclusions and Future Work}
+\label{chap-six}
 
-Compare different transmission zone shapes.
+In this thesis we presented a geographic routing algorithm that doesn't maintain either end-to-end paths or neighbor information hence it avoids the overhead associated with exchanging control information and computation heavy path calculations. Our algorithm doesn't do a route discovery, which eliminates the typical delay associated with reactive routing algorithms and makes it oblivious of node movement. 
+
+In case of 2 dimensional node arrangement a small petal width ($\approx 15\%$) is sufficient for reliable delivery and less transmission overhead. For a random distribution of nodes $\approx 35 \% $ petal width matches the delivery rate of flooding while reducing the overhead by half. Generally, single transmission zone scheme has a better performance but in presence of routing voids diverse transmission zones achieve a higher delivery rate with smaller petal widths (45\% as compared to 55\%). In all the cases the number of hops and end-to-end delay is nearly equal to flooding however for dense networks the end-to-end delay increases sharply as compared to petal routing. Moreover, for dense networks the transmission overhead for petal routing remains fairly constant whereas it increases linearly with flooding. 
+
+We have not compared the performance metrics with other popular MANET routing protocols like Adhoc on Demand Distance Vector Routing (AODV) or Optimized Link State Routing protocol or with geographic routing protocols like Reactive-Greedy-Reactive routing protocol. A direct comparison with the metrics from these protocols shall give a better understanding of the scenarios where petal routing would be more suitable. Another interesting direction would be employ petal routing protocol in actual FANET network and study its performance and suitability in a real life scenario.

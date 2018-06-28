@@ -5,7 +5,7 @@ In recent years, employing a cluster of small and mini UAVs for missions like bo
 
 An inter UAV ad-hoc network is the most suitable option for enabling communication among the UAVs. However traditional destination IP based routing protocols impose high overhead in mobile ad-hoc networks due to node mobility which leads to frequent topology changes. Geographic routing or position-based routing protocols which take the aid of geographic locations of nodes have been demonstrated to scale better for mobile ad-hoc networks. However, most of these protocols have been designed with 2-dimensional networks in mind which are not directly applicable to 3-dimensional networks.
 
-In this thesis, we study some geographical routing protocols and propose an extended version of our past work on geographic routing. Our proposed protocol enhances reliability by routing packets through multiple geo-diffused paths while minimizing the overhead by limiting the flooding to a specific region. We demonstrate the feasibility of our protocol among a group of quadrotor drones in Qrsim simulator working on plume wrapping problem. We have also presented statistical data on the performance evaluation of our protocol on metrics like end-to-end delay, transmission overhead, average number of hops and delivery ratio.
+In this thesis, we study some geographical routing protocols and propose a geographic routing protocol for aerial networks. Our proposed protocol utilizes the inherently broadcast nature of wireless medium to its advantage by making the intermediate nodes do a constrained flooding towards the destination. Our proposed routing scheme matches the reliability of a network wide flooding algorithm while avoiding the overhead associated with flooding. We demonstrate the feasibility of our protocol among a group of quadrotor drones in Qrsim simulator working on plume wrapping problem and present statistical data on the performance evaluation on metrics like end-to-end delay, transmission overhead, average number of hops and delivery ratio.
 
 
 \end{abstract}
@@ -20,17 +20,30 @@ In this thesis, we study some geographical routing protocols and propose an exte
 
 %% -------------------------------- Dedication ------------------------------ %%
 \begin{dedication}
- \centering To my parents.
+To my mother Dr. Pritam Kumari, my father Shri Rajiv Kumar and the memory of my uncle Shri Sanjeev Kumar Trivedi.
+
+
+To the teachers and mentors --- Dr. Rudra Dutta, Mr. Rahul Sharma, Mr. Sanjeev Sharma, Mrs. Meeta Kumar, Mr. Hasnat Hasan and Dr. Rakesh Sharma --- who helped and guided me at the critical phases of my life.
+
 \end{dedication}
 
 %% -------------------------------- Biography ------------------------------- %%
 \begin{biography}
-The author was born in a small town \ldots
+The author is from Muzaffarpur, Bihar, India. He received his Bachelors of Engineering in Computer Engineering from University of Pune (MIT College of Engineering) in 2014 and worked as a Software Engineer at Amdocs Inc. and Calsoft Inc. from 2014 to 2016. The author then enrolled in Masters of Science in Computer Science program in North Carolina State University in 2016.
 \end{biography}
 
 %% ----------------------------- Acknowledgements --------------------------- %%
 \begin{acknowledgements}
-I would like to thank my advisor for his help.
+I would like to thank my advisor, Dr. Rudra Dutta for guiding me throughout my master's program. His insight and feedback were critical for the completion of my thesis.
+
+I would like to thank Dr. Muhammad Shahzad and Dr. Mihail Sichitiu for serving on my advisory committee. 
+
+I would like to thank Angelyn and Harsh for helping at various stages of my work. Special thanks to Mrunal for proofreading my thesis draft and Nikhil for the discussions on probability, algebra, and life.
+
+Many thanks to Shri Shambhu Sharan Prasad Roy, Shri Nandkishor Trivedi and Mr. Bal Mukund for their support and constant encouragement during my master's studies.
+
+Last but not the least, my brothers and sisters, Prashant, Savyasachi, Aparajita, Rashmi and my friends for the fun, joy, and laughs.
+
 \end{acknowledgements}
 
 
