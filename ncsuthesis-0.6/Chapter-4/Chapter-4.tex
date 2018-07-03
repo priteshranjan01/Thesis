@@ -140,22 +140,23 @@ The packet header contains the arguments which define the source, destination, t
 \item Source Location (\emph{sLoc}): The GPS coordinate of the source node.
 \item Destination Node ID (\emph{destId}): A unique identifier for the destination node. If a packet is destined to a geographical region, then this shall be set to the macro ANY. If a packet is to be flooded in the network, then this value should be set to the macro FLOOD. 
 \item Destination Location (\emph{dLoc}): GPS coordinate of the destination as known to the source node. In case of flood packet, this would be set to NULL or be ignored. 
-\item Radius (\emph{r}): In case of a geocast packet, the radius along with dLoc defines the destination spherical region for the packet.
+\item Destination Location Timestamp (\emph{The time when the destination node's location was updated.}
+\item Destination Region Radius (\emph{r}): In case of a geocast packet, the radius along with dLoc defines the destination spherical region for the packet.
 \item Transmitter ID (\emph{trId}): A unique identifier for the latest transmitter of the packet.
 \item Transmitter Location (\emph{trLoc}): GPS coordinate of the node that had last transmitted the packet.
 \item Timestamp (\emph{timestamp}): The time when this packet was transmitted by the source.
-\item Width (\emph{w}): The width of the transmission zone for the packet. Explained in Section \ref{transmission_zone}.
-\item minWidth (\emph{minWid}): The minimum width of the transmission zone for the packet. Explained in Section \ref{zone_width}.
+\item Zone Width (\emph{w}): The width of the transmission zone for the packet. Explained in Section \ref{transmission_zone}.
+\item Minimum Zone Width (\emph{minWid}): The minimum width of the transmission zone for the packet. Explained in Section \ref{zone_width}.
 \item Hops To Live (\emph{HTL}): A node forwards a message only if HTL > 0 and reduces HTL by 1 before forwarding the packet. 
 \item Acknowledgement Required (\emph{ackReq}): This flag denotes whether the source node is expecting an \emph{ack} reply.
-\item Update Allowed (\emph{update}): This flag denotes whether an intermediate node can update the message headers. For example, if the intermediate node has a location information of the destination that is later than the message's \emph{timestamp}. This is explained in Section \ref{diverged_trans_zone}
+\item Diverged Zone (\emph{divZone}): This flag denotes whether an intermediate node can update the message headers. For example, if the intermediate node has a location information of the destination that is later than the message's \emph{timestamp}. This is explained in Section \ref{diverged_trans_zone}
 
 \end{itemize}
 
 
 \subsection{Message transmission}
 
-The Qrsim simulator has a \emph{Pelican} class which represents a quadrotor drone. An object of pelican class stores drone specific data like location coordinates, velocity, rotor thrust etc. To simulate message transmission we added the following properties to the class.
+The Qrsim simulator has a \emph{Pelican} class which represents a quadrotor drone. An object of pelican class stores drone specific data like location coordinates, velocity, rotor thrust etc. To simulate message transmission we added the following data members to the class.
 \begin{itemize}
 \item \emph{transmitter\textunderscore strength}
 \item \emph{receiver\textunderscore threshold}
@@ -164,6 +165,7 @@ The Qrsim simulator has a \emph{Pelican} class which represents a quadrotor dron
 \item \emph{transmission\textunderscore frequency}
 \item \emph{in\textunderscore msg\textunderscore queue}
 \item \emph{seen\textunderscore msg\textunderscore set}
+\item \emph{transmitted\textunderscore msg\textunderscore set}
 \end{itemize}
 
 When a transmitting node `T' needs to send a message `msg' to a destination `D', the simulation first checks if the signal strength at the destination will be higher than the receiver's threshold (\ref{transmissionSuccess}). If yes, then the simulation appends the message to the \emph{in\textunderscore msg\textunderscore queue} of the destination node. (\ref{sendMessage})
@@ -220,11 +222,12 @@ A receiver iterates over each message in its message queue and discards any dupl
             processMessage(msg)\;
             add(drone.seen\textunderscore msg\textunderscore set, msg)\;
             }
+        Delete(drone.in\textunderscore msg\textunderscore queue, msg)\;
         }
     }
 \end{algorithm}
 
-\subsection{Location service} \label{loc_service_impl}
+\subsection{Location Information} \label{loc_service_impl}
 
 For the geographical routing protocols to work successfully, the source node needs to know the geo-location (or an approximation) of the destination location. To provide this information we need a service that maintains and distributes the location table. A classification of location services has been mentioned in Section \ref{loc_service}. In our simulation we have implemented an all-for-all location service i.e. every node maintains the location information of every other node in the network. 
 

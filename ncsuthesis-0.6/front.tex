@@ -1,13 +1,11 @@
 %% ------------------------------ Abstract ---------------------------------- %%
 \begin{abstract}
 
-In recent years, employing a cluster of small and mini UAVs for missions like border surveillance, disaster monitoring, search, and rescue operation has gained significant traction due to advantages over a single large and costlier UAV.  However, an autonomously operating multi-UAV fleet has its own set of challenges like co-operative path planning, collision avoidance, autonomous mission planning etc. A reliable communication network among the cooperating UAVs is critical to the success of a mission and is the most fundamental problem as well.
+With increasing onboard computing and communication capability, small Unmanned Aerial Vehicles (UAVs) or drones, individually or in platoons, are increasingly becoming an attractive prospective platform for many smart cities, smart agriculture, and environmental sensing applications.  Autonomously operating multi-UAV fleets pose many research challenges like co-operative path planning, collision avoidance, and autonomous mission planning.  Most approaches to controlling fleets presuppose reliable communication capability among the UAVs.  The problem of routing in the airborne drone network is thus itself an important problem.
 
-An inter UAV ad-hoc network is the most suitable option for enabling communication among the UAVs. However traditional destination IP based routing protocols impose high overhead in mobile ad-hoc networks due to node mobility which leads to frequent topology changes. Geographic routing or position-based routing protocols which take the aid of geographic locations of nodes have been demonstrated to scale better for mobile ad-hoc networks. However, most of these protocols have been designed with 2-dimensional networks in mind which are not directly applicable to 3-dimensional networks.
+Traditional destination IP based routing protocols impose high overhead in aerial mobile ad-hoc networks due to node mobility which leads to frequent topology changes. Geographic routing or position-based routing protocols which take the aid of geographic locations of nodes have been demonstrated to scale better for mobile ad-hoc networks. However, most of these protocols have been designed with 2-dimensional networks in mind which are not directly applicable to 3-dimensional networks.
 
-In this thesis, we study some geographical routing protocols and propose a geographic routing protocol for aerial networks. Our proposed protocol utilizes the inherently broadcast nature of wireless medium to its advantage by making the intermediate nodes do a constrained flooding towards the destination. Our proposed routing scheme matches the reliability of a network wide flooding algorithm while avoiding the overhead associated with flooding. We demonstrate the feasibility of our protocol among a group of quadrotor drones in Qrsim simulator working on plume wrapping problem and present statistical data on the performance evaluation on metrics like end-to-end delay, transmission overhead, average number of hops and delivery ratio.
-
-
+In this thesis, we study some geographical routing protocols and propose a geographic routing protocol for aerial networks. Our proposed protocol utilizes the inherently broadcast nature of the wireless medium to its advantage by making the intermediate nodes do a constrained flooding towards the destination. Our proposed routing scheme matches the reliability of a network-wide flooding algorithm while avoiding the overhead associated with flooding. We demonstrate the feasibility of our protocol among a group of quadrotor drones in Qrsim simulator working on plume wrapping problem and present statistical data on the performance evaluation on metrics like end-to-end delay, transmission overhead, average number of hops and delivery ratio.
 \end{abstract}
 
 
@@ -22,8 +20,7 @@ In this thesis, we study some geographical routing protocols and propose a geogr
 \begin{dedication}
 To my mother Dr. Pritam Kumari, my father Shri Rajiv Kumar and the memory of my uncle Shri Sanjeev Kumar Trivedi.
 
-
-To the teachers and mentors --- Dr. Rudra Dutta, Mr. Rahul Sharma, Mr. Sanjeev Sharma, Mrs. Meeta Kumar, Mr. Hasnat Hasan and Dr. Rakesh Sharma --- who helped and guided me at the critical phases of my life.
+To the teachers and mentors --- Dr. Rudra Dutta, Mr. Rahul Sharma, Mr. Sanjeev Sharma, Mrs. Meeta Kumar, Mr. Hasnat Hasan and Dr. Rakesh Sharma, Dr. Pritam Kumari --- who helped and guided me at some critical times.
 
 \end{dedication}
 

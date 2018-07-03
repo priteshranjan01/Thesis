@@ -65,7 +65,7 @@ The above information is summarized in Table \ref{tab:communication_requirements
 \toprule
 Requirements & Values\\
 \midrule
-Mission Coverage & Medium or Large $\approx 500 m \times 500 m \times 500 m$ \\
+Mission Coverage & Medium $\approx 500 m \times 500 m \times 500 m$ or Large\\
 \midrule
 Network mode & ad hoc \\
 \midrule
@@ -193,27 +193,36 @@ As discussed in Section \ref{comm_reqs}, the common scenarios when a UAV would n
 
 Now we shall present the message primitives that shall facilitate the above communications. 
 \begin{enumerate}
-\item \emph{Flood(message, sourceID)}: Deliver  the message to all the reachable nodes in the network.
-\item \emph{Flood(message, sourceID, HTL)}: Deliver the messages to the neighboring nodes.
+\item \emph{NetworkWideFlood(message, sourceID)}: Deliver  the message to all the reachable nodes in the network.
+\item \emph{HopLimitedFlood(message, sourceID, HTL)}: Deliver the messages to the neighbouring nodes which are HTL hops away.
 \item \emph{Unicast(message, sourceID, destinationID)}: Deliver the message to a specific node.
 \item \emph{Geocast(message, sourceID, destinationCoordinates, radius)}: Deliver the message to all the nodes in the specified region.
+\item \emph{Multicast(message, sourceID, nodeIDs)}: Deliver the message to all the nodes in the \emph{nodeIDs} list. 
 \end{enumerate}
 
-Here \emph{sourceID} and \emph{destinationID} are unique identifiers for a node - possibly IP addresses, while \emph{destinationCoordinates} together with \emph{radius} represent a spherical region with specified coordinate as the center and specified radius.
+Here \emph{sourceID} and \emph{destinationID} are unique identifiers for a node - possibly IP addresses, while \emph{destinationCoordinates} together with \emph{radius} represent a spherical region with specified coordinate as the center and specified radius. \emph{nodeIDs} is a list containing the ID of nodes in a group. 
 
 We will now present a high-level algorithmic description of these message primitives.
 
-\subsubsection{Flood primitive}
+\subsubsection{Network Wide Flood primitive}
 
-Flood primitive ensures that the packet shall be received by all the nodes that are reachable. When a source node `S' needs to send a message to every node in the network, it creates a header with the following parameters and encapsulates the data in this header.
+Network wide flood primitive ensures that the packet shall be received by all the nodes that are reachable. When a source node `S' needs to send a message to every node in the network, it creates a header with the following parameters and encapsulates the data in this header.
 
 \begin{eqnarray*}
-& header = &Header(destId = FLOOD, HTL = NETWORK\textunderscore DIAMETER)
+& header = &Header(destId = FLOOD)
 \end{eqnarray*} 
 
 Node `S' then broadcasts this message to all its neighbors in the wireless medium. An intermediate node `N', on receiving the message for the first time reads the contents and rebroadcasts it. Thereafter, `N' discards any duplicate receptions of the message. This guarantees that the flooding is loop-free. The benefit of Flooding is the protocol's robustness however there is a high overhead associated with flooding and hence it is suitable for small packets only.
 
-The primitive allows to restrict the span of flooding by the HTL parameter. For example, if a source node `S' wants to send a message to all its immediate neighbors (i.e. in direct radio range) then `S' shall set the HTL value to 1 in the header.
+\subsubsection{Hop Limited Flood}
+
+The primitive allows to restrict the span of flooding by the `Hops to Live(HTL)' parameter. For example, if a source node `S' wants to send a message to all its immediate neighbors (i.e. in direct radio range) then `S' shall set the HTL value to 1 in the header. Conceptually, HTL is equivalent to `Time To Live (TTL)' in an IP network. 
+
+\begin{eqnarray*}
+& header = &Header(destId = FLOOD, HTL)
+\end{eqnarray*} 
+
+It should be noted that hop limited flooding can be used for a network wide flooding by setting HTL equal to infinity (e.g. 15 is assumed to be infinity in RIP). We represent infinity by the macro NETWORK\textunderscore DIAMETER.
 
 The part of receive algorithm that deals with FLOOD packets is depicted in Algorithm \ref{flood_recv}
 
@@ -277,6 +286,8 @@ Source node `S' then encapsulates the data in this header and transmits the pack
 }
 \end{algorithm}
 
+
+
 \subsubsection{Unicast primitive}
 
 Unicast is used when a source node `S' needs to send a message to a destination node `D'. Unicast uses the same underlying mechanism as geocast to route a message except that `S' first consults its location table for `dLoc' - the location of destination `D' - and creates a header with the following parameters.
@@ -284,9 +295,7 @@ Unicast is used when a source node `S' needs to send a message to a destination 
 \begin{eqnarray*}
 & header = & Header(destId = destID, dLoc = dLoc)
 \end{eqnarray*}
-
-Source node `S' then encapsulates the data in this header and transmits the packet.
-An intermediate receiving node `N' follows the Algorithm \ref{unicast_recv}.
+Source node `S' then encapsulates the data in this header and transmits the packet. Moreover, in Unicast the destination is a particular node instead of a regions. An intermediate receiving node `N' follows the Algorithm \ref{unicast_recv}.
 
 \begin{algorithm}
 \caption{Receive(msg): Unicast} 
@@ -307,5 +316,22 @@ An intermediate receiving node `N' follows the Algorithm \ref{unicast_recv}.
     {
         algorithm \ref{packet_scheduling}
     }
+}
+\end{algorithm}
+
+
+\subsubsection{Multicast primitive}
+
+In our routing scheme,  \emph{multicast} employs \emph{unicast} at application layer i.e. converting a multicast into multiple unicasts --- each one directed to a specific node in the group. Thereby, the receiving end of the algorithm is the same as Algorithm \ref{unicast_recv} whereas the sending part is as depicted in Algorithm \ref{multicast_send} 
+
+\begin{algorithm}
+\caption{Send(msg, nodeIDs): Multicast} 
+\label{multicast_send}
+\DontPrintSemicolon
+\SetKwProg{Send}{Send}{}{}
+\Send{(msg, nodeIDs)}{
+    \ForEach {nodeId $\in$ nodeIDs}{%
+        unicast(msg, nodeId)\;
+        }
 }
 \end{algorithm}

@@ -2,7 +2,7 @@
 \newcommand\simResultFigSize{0.7}
 \label{chap-five}
 
-We have used Qrsim quadrotor simulator \cite{denardi2013rn} - briefly explained in Section \ref{qrsim_intro} - for evaluating our protocol. The volume of the simulated flying zone is 120 units $ \times \text{120 units} \times \text{120 units, out of which we have used 80 units} \times \text{80 units}\times $ 40 units where drones can be placed. We also have a scaling factor which scales the simulation units i.e. a scaling factor of 5 will make 1 unit in simulation to 5 meters. The drones have a reliable transmission range of $\approx 90 m$ (\fref{fig:packet_loss}) and the wi-fi antenna is omnidirectional. The simulation state changes at a time quantum of 0.2 seconds.
+We have used Qrsim quadrotor simulator \cite{denardi2013rn} - briefly explained in Section \ref{qrsim_intro} - for evaluating our protocol. The volume of the simulated flying zone is 120 units $ \times \text{120 units} \times \text{60 units, out of which we have used 80 units} \times \text{80 units}\times $ 40 units where drones can be placed. We also have a scaling variable which scales the simulation units i.e. a scaling factor of 5 will make 1 unit in simulation to 5 meters. The drones have a reliable transmission range of $\approx 90 m$ (\fref{fig:packet_loss}) and the wi-fi antenna is omnidirectional. The simulation state changes at a time quantum of 0.2 seconds.
 
 Initially, the drones start in a mesh formation arranged in a 2D grid as shown in \fref{fig:mesh_formation} and gradually they wrap around the plume - which, in our case, for simplicity, has been assumed to be spherical \fref{fig:final_state}. Besides these two formations, we have also evaluated our results for a random distribution of drones in the simulation space \fref{fig:random_formation}.
 
@@ -17,7 +17,7 @@ The messages sent among the drones are assumed to be small and we have not consi
 
 In the following sections we compare the performance of our routing scheme to flooding. We shall be studying the following performance metrics `Packet delivery ratio', `Average end-to-end delay', `Average number of hops', `Average number of transmissions' \cite{OUBBATI201729}:
 
-We compare these metrics for three arrangements of the UAVs namely, \emph{mesh} - \fref{fig:mesh_formation}, \emph{random} - \fref{fig:random_formation}, \emph{spherical} - \fref{fig:final_state}. The three formations have peculiar properties, for example the spherical formation has the plume acting as a \emph{routing void}, whereas the mesh formation represents a 2D formation and thus we can study the performance of our 3D routing scheme in a 2D setting. Finally, random placement of the drones lets us study the performance in a generic situation. We have presented the results for 1000 packet transfers between two furthest nodes. In appendix we have presented the plots for the mean and standard error for 10 such iterations.
+We compare these metrics for three arrangements of the UAVs namely, \emph{mesh} - \fref{fig:mesh_formation}, \emph{random} - \fref{fig:random_formation}, \emph{spherical} - \fref{fig:final_state}. The three formations have peculiar properties, for example the spherical formation has the plume acting as a \emph{routing void}, whereas the mesh formation represents a 2D formation and thus we can study the performance of our 3D routing scheme in a 2D setting. Finally, random placement of the drones lets us study the performance in a generic situation. We have presented the aggregate results for 30 iterations where in each iteration, 500 packets are transferred between the furthest node pair. In appendix we have presented the plots for the mean and standard error for 1 sample iterations.
 
 \section{Packet delivery ratio}
 \label{pdr}
@@ -235,21 +235,21 @@ For any packet the upper bound of `NT' is the total number of nodes in the netwo
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/nodeDensity}
-\caption{Compact node alignment for critical network density}
+\caption{Compact node alignment for ideal network density}
 \label{fig:node_density}
 \end{figure}
 
-\textbf{Network density:} To achieve a reliable multi-hop communication among the network nodes, the maximum separation between any two nodes should be less than the transmission radius of the transmitting antenna. Therefore --- assuming omnidirectional antennas with transmission radius $T_r$ --- an optimal number of nodes will result in a crystal like packing of space --- the sphere being a node's zone of influence with the node at its center and $\frac{T_r}{2}$ as its radius. This is depicted in \fref{fig:node_density}. A lower number of nodes will result in less reliable communication whereas higher number will result in redundant transmissions and collisions. Hence, we define network density as the ratio of the volume of flying space to the combined volume of the node's sphere of influence. i.e. 
+\textbf{Network density:} To achieve a reliable direct radio communication between a pair of nodes, the maximum separation between the two nodes should be less than the transmission radius of the transmitting antenna. Therefore --- assuming omnidirectional antennas with transmission radius $T_r$ --- an optimal number of nodes will result in a crystal like packing of space --- the sphere being a node's zone of influence with the node at its center and $\frac{T_r}{2}$ as its radius. This is depicted in \fref{fig:node_density}. A lower number of nodes will result in less reliable communication whereas higher number will result in redundant transmissions and collisions. Hence, we define network density as the ratio of the volume of flying space to the combined volume of the node's sphere of influence. i.e. 
 
 \begin{equation}
-    Node Density = \dfrac{L \times W \times H}{ \text{nodeCount} \times \frac{4}{3} \times \pi \times \big(\frac{T_r}{2} \big)^3}
+    \text{Network Density} = \dfrac{L \times W \times H}{ \text{nodeCount} \times \frac{4}{3} \times \pi \times \big(\frac{T_r}{2} \big)^3}
 \end{equation}
 
-and we classify the network as sparse, critical and dense as per the following criteria.
+and we classify the network as sparse, ideal and dense as per the following criteria.
 \begin{eqnarray} \label{node_density}
 \begin{aligned}
 & \text{Sparse:} & < 0.8 \\
-& \text{Critical:} & \big[0.8, 1.2 \big]  \\
+& \text{Ideal:} & \big[0.8, 1.2 \big]  \\
 & \text{Dense:} & > 1.2
 \end{aligned}
 \end{eqnarray}
@@ -261,10 +261,10 @@ For example, with scaling factor = 4, Number of Drones = 43, and flying space vo
 & \Rightarrow \text{Network Density} = & \dfrac{V}{v} \approx 1
 \end{eqnarray*}
 
-With 36 drones, the network density is about 1.2, hence the metrics we presented in the previous sections were for critical network density. In this section we shall study the effect of network density on the performance our routing scheme and flooding.
+With 36 drones, the network density is about 1.2, hence the metrics we presented in the previous sections were for ideal network density. In this section we shall study the effect of network density on the performance our routing scheme and flooding.
 
 As we observed in Section \ref{pdr}, the PDR for flooding algorithm depends on the HTL and is $>90\%$ for $HTL>4$ whereas PDR depends on petal width in case of petal routing and $>90\%$ for $width>35\%$. 
-Therefore, to study the effects of network density we have picked HTL = 10 for flooding and petal width = 35\% for petal routing. 
+Therefore, to study the effects of network density we have picked HTL = 10 for flooding and petal width = 35\% for petal routing. As in previous sections we present the aggregate results for 30 iterations where in each iteration, 300 packets are transferred between the furthest node pair.
 
 \fref{fig:nd_DR} shows the variation in delivery ratio vs network density. We can observe that the PDR for flooding is close to that of single transmission zone scheme of petal routing even for sparse network density. This demonstrates the robustness of petal routing i.e. even in sparse networks the reliability of petal routing is as good for flooding for appropriate petal width.
 
@@ -291,7 +291,7 @@ Therefore, to study the effects of network density we have picked HTL = 10 for f
 \label{fig:ND_delay}
 \end{figure}
 
-In \fref{fig:ND_delay}, we can observe the change in end-to-end delay with network density. The rate of increase in end-to-end delay for flooding is higher than that of petal routing which is due to the excessive number of retransmissions in the network. Since, our routing algorithm restricts the transmissions to a zone thereby pruning the unnecessary retransmissions.  
+In \fref{fig:ND_delay}, we can observe the change in end-to-end delay with network density. The rate of increase in end-to-end delay for flooding is higher than that of petal routing which is due to the excessive number of retransmissions in the network. Since, our routing algorithm restricts the transmissions to a zone thereby pruning the unnecessary retransmissions. Moreover, the total time it takes for the flooding to complete rises even more sharply which is also due to the number of retransmissions from each of the nodes.
 
 \begin{figure}[hbtp]
 \centering
@@ -302,3 +302,55 @@ In \fref{fig:ND_delay}, we can observe the change in end-to-end delay with netwo
 
 In \fref{fig:ND_trans} we observe that the average number of transmissions increases with increase in network density. However, the increase is more steep for flooding algorithm as compared to petal routing. Specifically, for flooding algorithm, the average number of transmissions is roughly equal to the number of nodes in the network. This is expected since all the nodes which receive a packet transmit at least once in case of flooding; however, in our routing scheme we restrict the retransmissions to a zone and by back-off mechanism as well.
 
+\section{Effect of location inaccuracy}
+
+In this section we shall study the effect of node mobility on the previously studied performance metrics. We have studied a random distribution of nodes in the flying volume where each node has a random velocity. As we discussed in Section \ref{loc_service_impl} the difference in the actual location of the destination node and the location in the location table of the source node is a function of speed of the destination node as well as the distance between the source and the destination node. The following results are with 36 drones randomly distributed in a ($80 \times 80 \times 40 \times$) volume with a scaling factor of 5. 
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_fl_DR_random.png}
+\caption{Delivery Rate for flooding algorithm with inaccurate destination location in a random distribution of nodes.}
+\label{fig:mob_fl_DR_random}
+\end{figure}
+
+\fref{fig:mob_fl_DR_random} depicts a plot of delivery ratio for flooding algorithm, whereas \fref{fig:mob_pe_DR_random} depicts a plot fo delivery ratio for petal routing. We can notice that for large HTL ($> 4$) and petal width ($> 35\%$) the delivery rate for both the algorithms are comparable. However an interesting point to note is that the delivery rate with diverged transmission zones scheme is better for smaller petal widths. This validates our motivation for diverged transmission zone as presented in Section \ref{diverged_trans_zone}.
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_DR_random.png}
+\caption{Delivery Rate for petal routing with inaccurate destination location.}
+\label{fig:mob_pe_DR_random}
+\end{figure}
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_hops_random.png}
+\caption{Average number of hops for petal routing with inaccurate destination location.}
+\label{fig:mob_pe_hops_random}
+\end{figure}
+
+\fref{fig:mob_pe_hops_random} depicts the average number of hops between the two furthest nodes. As we can notice from \fref{fig:mob_pe_hops_random} the average number of hops to a reliable delivery is about 4 hops which is substantiated by \fref{fig:mob_fl_DR_random}.
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_delay_random.png}
+\caption{End-to-end delay for petal routing with inaccurate destination location.}
+\label{fig:mob_pe_delay_random}
+\end{figure}
+
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_fl_trans_random.png}
+\caption{Average number of tries per successful transmission for flooding algorithm with inaccurate destination location.}
+\label{fig:mob_fl_trans_random}
+\end{figure}
+
+\begin{figure}[hbtp]
+\centering
+\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_trans_random.png}
+\caption{Average number of tries per successful transmission for petal routing with inaccurate destination location.}
+\label{fig:mob_pe_trans_random}
+\end{figure}
+
+In \fref{fig:mob_fl_trans_random} we present the average number of tries for each successful delivery of a packet for flooding algorithm and in \fref{fig:mob_pe_trans_random}, we depict the same metric for petal routing algorithm. As with previous observations the average is equal to the number of nodes for flooding ($\approx 30$) whereas it is significantly less ($\approx 10$) for petal routing due to limited flooding and back-off mechanism. 
