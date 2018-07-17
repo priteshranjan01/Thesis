@@ -1,6 +1,6 @@
 \documentclass[12pt,          % font size: 11pt or 12pt
                ms,           % degree:    ms or phd
-               doublespacing % spacing: onehalfspacing or doublespacing
+               onehalfspacing % spacing: onehalfspacing or doublespacing
                ]{ncsuthesis}
 
 %%----------------------------------------------------------------------------%%
@@ -359,7 +359,10 @@
 
 
 \pagestyle{fancy}
-\newgeometry{margin=1in,lmargin=1.25in,footskip=\chapterfootskip, includehead, includefoot}
+%\newgeometry{margin=1in,lmargin=1.25in,footskip=\chapterfootskip, includehead, includefoot}
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}
+\newgeometry{margin=1in,lmargin=1.25in,footskip=\chapterfootskip, includefoot}
 \include{Chapter-1/Chapter-1}
 \include{Chapter-2/Chapter-2}
 \include{Chapter-3/Chapter-3}
@@ -386,7 +389,7 @@
  %\vspace{-0.5in}
 \titleformat{\chapter}[display]{\bf\filcenter
 }{\chaptertitlename\ \thechapter}{11pt}{\bf\filcenter}
-\titlespacing*{\chapter}{0pt}{-0.5in-9pt}{22pt}
+\titlespacing*{\chapter}{0pt}{0.0in-9pt}{22pt}
 
 \printbibliography[heading=myheading]
 \end{spacing}

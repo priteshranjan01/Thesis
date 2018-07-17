@@ -15,9 +15,9 @@ Initially, the drones start in a mesh formation arranged in a 2D grid as shown i
 
 The messages sent among the drones are assumed to be small and we have not considered transmission errors and congestion separately, rather they are assumed to be represented by the free space path loss model explained in Section \ref{free_space_path_loss} and the parameters which are in Table \ref{tab:fspl_parameters}. 
 
-In the following sections we compare the performance of our routing scheme to flooding. We shall be studying the following performance metrics `Packet delivery ratio', `Average end-to-end delay', `Average number of hops', `Average number of transmissions' \cite{OUBBATI201729}:
+In the following sections we compare the performance of our routing scheme to flooding. We shall be studying the following performance metrics `Packet delivery ratio', `Average number of hops', `Average number of transmissions' \cite{OUBBATI201729}:
 
-We compare these metrics for three arrangements of the UAVs namely, \emph{mesh} - \fref{fig:mesh_formation}, \emph{random} - \fref{fig:random_formation}, \emph{spherical} - \fref{fig:final_state}. The three formations have peculiar properties, for example the spherical formation has the plume acting as a \emph{routing void}, whereas the mesh formation represents a 2D formation and thus we can study the performance of our 3D routing scheme in a 2D setting. Finally, random placement of the drones lets us study the performance in a generic situation. We have presented the aggregate results for 30 iterations where in each iteration, 500 packets are transferred between the furthest node pair. In appendix we have presented the plots for the mean and standard error for 1 sample iterations.
+We compare these metrics for three arrangements of the UAVs namely, \emph{mesh} - \fref{fig:mesh_formation}, \emph{random} - \fref{fig:random_formation}, \emph{spherical} - \fref{fig:final_state}. The three formations have peculiar properties, for example the spherical formation has the plume acting as a \emph{routing void}, whereas the mesh formation represents a 2D formation and thus we can study the performance of our 3D routing scheme in a 2D setting. Finally, random placement of the drones lets us study the performance in a generic situation. We have presented the aggregate results for 15 iterations where in each iteration, 250 packets are transferred between the 5 furthest node pairs.
 
 \section{Packet delivery ratio}
 \label{pdr}
@@ -25,47 +25,47 @@ We compare these metrics for three arrangements of the UAVs namely, \emph{mesh} 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_DR_mesh.png}
-\caption{Delivery rate in mesh formation for flooding}
+\caption{Delivery ratio in mesh formation for flooding algorithm}
 \label{fig:fl_DR_mesh}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth]{ncsuthesis-0.6/Chapter-5/figs/pe_DR_mesh.png}
-\caption{Delivery rate in mesh formation for petal routing}
+\caption{Delivery ratio in mesh formation for petal routing}
 \label{fig:pe_DR_mesh}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_DR_spherical.png}
-\caption{Delivery rate in spherical formation for flooding.}
+\caption{Delivery ratio in spherical node distribution for flooding algorithm}
 \label{fig:fl_DR_spherical}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth]{ncsuthesis-0.6/Chapter-5/figs/pe_DR_spherical.png}
-\caption{Delivery rate in spherical formation for petal routing.}
+\caption{Delivery ratio in spherical node distribution for petal routing}
 \label{fig:pe_DR_spherical}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_DR_random.png}
-\caption{Delivery rate in random formation for flooding}
+\caption{Delivery ratio in random node distribution for flooding algorithm}
 \label{fig:fl_DR_random}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth]{ncsuthesis-0.6/Chapter-5/figs/pe_DR_random.png}
-\caption{Delivery rate in random formation}
+\caption{Delivery ratio in random node distribution for petal routing}
 \label{fig:pe_DR_random}
 \end{figure}
 
 \textbf{Packet delivery ratio (PDR):} is defined as the ratio of `count of all packets successfully delivered ($P_r$)' to `count of all the packets transmitted by the sender (P)'. PDR characterizes the robustness and reliability of a routing scheme. The bigger is PDR, the better is the performance of the protocol. 
-The packet delivery ratio of flooding algorithm is considered as the upper bound for any routing mechanism since if the destination node is reachable then the probability of packet delivery is high due to the redundant transmissions. This can be observed in \fref{fig:fl_DR_mesh} which shows a plot of PDR vs Hops to Live (HTL) for our implementation of flooding algorithm. It should be noted that for small HTL values (e.g. HTL = 1) the PDR is low because the destination is more than 2 hops apart from the source and the intermediate nodes don't forward the packets. However as HTL approaches the diameter of the network (HTL > 4) PDR approaches 100\% delivery rate. 
+The packet delivery ratio of flooding algorithm is considered as the upper bound for any routing mechanism since if the destination node is reachable then the probability of packet delivery is high due to the redundant transmissions. This can be observed in \fref{fig:fl_DR_mesh} which shows a plot of PDR vs Hops to Live (HTL) for our implementation of flooding algorithm. It should be noted that for small HTL values (e.g. HTL = 1) the PDR is low because the destination is more than 2 hops apart from the source and the intermediate nodes don't forward the packets. However as HTL approaches the diameter of the network (HTL > 4) PDR approaches 100\% delivery ratio. 
 
 \fref{fig:pe_DR_mesh} shows the PDR of petal routing protocol in a mesh formation. We observe that even for petal width of 5\% and 15\%, the delivery ratio is between 70\% to 90\% which is due to the alignment of intermediate nodes in a straight line from source to destination. As expected the PDR approaches 100\% for higher petal width.
 
@@ -79,7 +79,7 @@ Finally, \fref{fig:fl_DR_random} shows the PDR of flooding algorithm for a rando
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=0.8\textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_hops_mesh.png}
-\caption{Number of hops: mesh formation, flooding algorithm}
+\caption{Average number of hops made by packet before received by the destination in mesh formation for flooding algorithm}
 \label{fig:fl_hops_mesh}
 \end{figure}
 \end{comment}
@@ -87,7 +87,7 @@ Finally, \fref{fig:fl_DR_random} shows the PDR of flooding algorithm for a rando
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth]{ncsuthesis-0.6/Chapter-5/figs/pe_hops_mesh.png}
-\caption{Number of hops in mesh formation for petal routing}
+\caption{Average number of hops in mesh formation for petal routing}
 \label{fig:pe_hops_mesh}
 \end{figure}
 
@@ -95,7 +95,7 @@ Finally, \fref{fig:fl_DR_random} shows the PDR of flooding algorithm for a rando
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=0.8\textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_hops_spherical.png}
-\caption{Number of hops: spherical formation, flooding algorithm}
+\caption{Average number of hops in spherical formation for flooding algorithm}
 \label{fig:fl_hops_spherical}
 \end{figure}
 \end{comment}
@@ -103,7 +103,7 @@ Finally, \fref{fig:fl_DR_random} shows the PDR of flooding algorithm for a rando
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize \textwidth,height=0.9\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/pe_hops_spherical.png}
-\caption{Number of hops in spherical formation for petal routing}
+\caption{Average number of hops in spherical node distribution for petal routing}
 \label{fig:pe_hops_spherical}
 \end{figure}
 
@@ -111,7 +111,7 @@ Finally, \fref{fig:fl_DR_random} shows the PDR of flooding algorithm for a rando
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=0.9\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/fl_hop_random.png}
-\caption{Number of hops in random formation for flooding algorithm}
+\caption{Average number of hops in random formation for flooding algorithm}
 \label{fig:fl_hops_random}
 \end{figure}
 \end{comment}
@@ -119,114 +119,61 @@ Finally, \fref{fig:fl_DR_random} shows the PDR of flooding algorithm for a rando
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/pe_hops_random.png}
-\caption{Number of hops in random distribution for petal routing.}
+\caption{Average number of hops in random node distribution for petal routing}
 \label{fig:pe_hops_random}
 \end{figure}
 
-\textbf{Average number of hops (H):} is defined as the number of data packets delivered divided by the number of hops performed by all packets. In other words `H' is the number of nodes that transmitted a packet that was successfully delivered to the destination. The number of hops a packet makes before reaching the destination is a representation of the resources consumed in delivering the packet. With antennas having fixed transmitting strength, reducing the number of hops reduces the energy expenditure. Therefore since we have assumed antennas have fixed transmitting strength, a smaller `H' is desired.
+\textbf{Average number of hops (H):} is the average number of hops made by a successfully delivered packet. In other words `H' is the number of nodes that transmitted a packet that was successfully delivered to the destination. The number of hops a packet makes before reaching the destination is a representation of the resources consumed in delivering the packet. With antennas having fixed transmitting strength, reducing the number of hops reduces the energy expenditure. Therefore since we have assumed antennas have fixed transmitting strength, a smaller `H' is desired.
 
 \fref{fig:pe_hops_mesh} shows the number of hops made by packets before reaching destination in a mesh formation. Since the nodes are arranged in a straight line even with an inter-drone distance of $\approx 500$ meters the packets reach the destination in about 4 hops. \fref{fig:pe_hops_spherical} plots a similar graph for the spherical distribution. We can see that the number of hops made by packets in  diverged transmission zone is higher for petal width of 35\% and 45\% because the intermediate nodes can route the packets over the spherical void even with thin petal whereas there are not sufficient number of nodes in the other case.
 
 Finally \fref{fig:pe_hops_random} shows the average number of hops made before successful delivery in a random distribution of nodes. Again, we can see that due to thinning of the petal as the packets reach close to the destination the average number of hops is less in random distribution of nodes.
-
-\section{Average end-to-end delay}
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_delay_mesh.png}
-\caption{End-to-end delay in mesh formation for flooding. `Total-flooding-time' is the time when all the retransmissions of a packet in the network are over. `End-to-end delay' is the time when the destination node has received the packet.}
-\label{fig:fl_delay_mesh}
-\end{figure}
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/pe_delay_mesh.png}
-\caption{End-to-end delay in mesh formation for petal routing.}
-\label{fig:pe_delay_mesh}
-\end{figure}
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_delay_spherical.png}
-\caption{End-to-end delay in spherical formation for flooding. }
-\label{fig:fl_delay_spherical}
-\end{figure}
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/pe_delay_spherical.png}
-\caption{End-to-end delay in spherical formation for petal routing.}
-\label{fig:pe_delay_spherical}
-\end{figure}
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/fl_delay_random.png}
-\caption{End-to-end delay in random formation for flooding.}
-\label{fig:fl_delay_random}
-\end{figure}
-
-\begin{figure}[hbtp]
-\centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/pe_delay_random.png}
-\caption{End-to-end delay in random formation for petal routing.}
-\label{fig:pe_delay_random}
-\end{figure}
-
-\textbf{Average end-to-end delay (EED):} is defined as the average time for data packets to reach the target destination. Only the data packets successfully received and generated are counted. The smaller is EED, the better is the performance of the protocol. End-to-end delay characterizes the tolerable delay in the network. The EED should be as low as possible to support real-time traffic. This metric is more important in UAV missions like live surveillance or disaster monitoring.
-
-In case of flooding, we have studied the end-to-end delay (i.e. the difference between the time a packet was generated to the time it was received at the destination) and total flooding time (i.e. the time until all transmissions are over and the flooding completes) vs HTL. In other words, Total flooding time represents the time taken when all the re-transmissions for a particular packet in the network are over. For example, if a source and destination node pairs are one-hop neighbors then end-to-end delay shall be low however total-flooding time shall be higher due to the redundant transmissions of the packet in the network. It should be noted that the plots for petal routing depict the equivalent of total-flooding-time in case of petal routing.  
-
-\fref{fig:fl_delay_mesh} represents the delay for flooding algorithm in a 2 dimensional mesh formation. We can see that `End-to-end delay' is equal to 'total-flooding-time' because the number of hops to the destination is equal to the network diameter. \fref{fig:pe_delay_mesh} represents the delay for petal routing in a 2 dimensional mesh formation. The delay for single and diverged transmission zones are approximately equal because of the linear alignment of the nodes. We can notice that the delay is $\approx 0.06$ seconds for flooding and $\approx 0.08$ for petal routing. In case of petal routing the delay accounts for the back-off time (Section \ref{back_off_time}) at each intermediate node.
-
-\fref{fig:fl_delay_spherical} shows the delay in a spherical formation for flooding algorithm whereas \fref{fig:pe_delay_spherical} shows the delay for petal routing. In \fref{fig:pe_delay_spherical} the EED is zero for petal width < 30\% because the denominator --- the number of packets delivered to destination --- is zero. 
-Finally \fref{fig:fl_delay_random} and \fref{fig:pe_delay_random} show the delay for random distribution of nodes. 
 
 \section{Average number of transmissions}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/fl_trans_mesh.png}
-\caption{Number of transmissions: mesh formation, flooding algorithm}
+\caption{Average number of transmissions per successful packet delivery in mesh formation for flooding algorithm}
 \label{fig:fl_trans_mesh}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/pe_trans_mesh.png}
-\caption{Number of transmissions: mesh formation}
+\caption{Average number of transmissions per successful packet delivery in mesh formation for petal routing}
 \label{fig:pe_trans_mesh}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/fl_trans_spherical.png}
-\caption{Number of transmissions: spherical formation, flooding algorithm}
+\caption{Average number of transmissions per successful packet delivery in spherical node distribution for flooding algorithm}
 \label{fig:fl_trans_spherical}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/pe_trans_spherical.png}
-\caption{Number of transmissions: spherical formation}
+\caption{Average number of transmissions per successful packet delivery in spherical node distribution for petal routing}
 \label{fig:pe_trans_spherical}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/fl_trans_random.png}
-\caption{Number of transmissions: random formation, flooding algorithm}
+\caption{Average number of transmissions per successful packet delivery in random node distribution for flooding algorithm}
 \label{fig:fl_trans_random}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth,height=\textheight,keepaspectratio]{ncsuthesis-0.6/Chapter-5/figs/pe_trans_random.png}
-\caption{Number of transmissions: random formation}
+\caption{Average number of transmissions per successful packet delivery in random node distribution for petal routing}
 \label{fig:pe_trans_random}
 \end{figure}
 
-\textbf{Average number of transmissions (NT):} is defined as the total number of transmissions divided by the total number of packets successfully delivered. In an ideal routing protocol `NT' would be equal to `number of hops' $\times$ `number of packets delivered'. In other words number of transmissions is the combined transmissions from all nodes for each successful packet delivery. `NT' directly influences the energy spent in routing a packet also lower number of transmissions leads to lesser collisions in a wireless medium. Hence, a lower value of `NT' is desirable. 
+\textbf{Average number of transmissions (NT):} is defined as the total number of transmissions divided by the total number of packets successfully delivered. In an ideal routing protocol `NT' would be equal to `number of hops' $\times$ `number of packets delivered'. In other words number of transmissions is the combined transmissions from all nodes for each successful packet delivery. `NT' influences the energy spent in routing a packet also lower number of transmissions leads to lesser collisions in a wireless medium. Hence, a lower value of `NT' is desirable. 
 
 For any packet the upper bound of `NT' is the total number of nodes in the network (because each node transmits the packet at most once). This can be noticed for flooding algorithm in \fref{fig:fl_trans_mesh} where NT is approximately equal to ($ \approx 30$) the total number of nodes ($ = 36$). whereas in our routing algorithm (\fref{fig:pe_trans_mesh}) the number of transmissions drops significantly (about half of flooding) due to the restricted flooding and `back-off and transmit' strategy. It should be noted that if the delivery rate is low the average number of transmissions gets high hence we see the large values for small HTL or thin petal widths.
 
@@ -286,17 +233,8 @@ Therefore, to study the effects of network density we have picked HTL = 10 for f
 
 \begin{figure}[hbtp]
 \centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/ND_delay}
-\caption{End-to-end delay vs network density}
-\label{fig:ND_delay}
-\end{figure}
-
-In \fref{fig:ND_delay}, we can observe the change in end-to-end delay with network density. The rate of increase in end-to-end delay for flooding is higher than that of petal routing which is due to the excessive number of retransmissions in the network. Since, our routing algorithm restricts the transmissions to a zone thereby pruning the unnecessary retransmissions. Moreover, the total time it takes for the flooding to complete rises even more sharply which is also due to the number of retransmissions from each of the nodes.
-
-\begin{figure}[hbtp]
-\centering
 \includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/ND_trans}
-\caption{Average number of transmission vs network density}
+\caption{Average number of transmissions per successful packet delivery vs network density}
 \label{fig:ND_trans}
 \end{figure}
 
@@ -304,28 +242,28 @@ In \fref{fig:ND_trans} we observe that the average number of transmissions incre
 
 \section{Effect of location inaccuracy}
 
-In this section we shall study the effect of node mobility on the previously studied performance metrics. We have studied a random distribution of nodes in the flying volume where each node has a random velocity. As we discussed in Section \ref{loc_service_impl} the difference in the actual location of the destination node and the location in the location table of the source node is a function of speed of the destination node as well as the distance between the source and the destination node. The following results are with 36 drones randomly distributed in a ($80 \times 80 \times 40 \times$) volume with a scaling factor of 5. 
+In this section we shall study the effect of node mobility on the previously studied performance metrics. We have studied a random distribution of nodes in the flying volume where each node has a random velocity. As we discussed in Section \ref{loc_service_impl} the difference in the actual location of the destination node and the location in the location table of the source node is a function of speed of the destination node as well as the distance between the source and the destination node. The following results are with 36 drones randomly distributed in a ($80 \times 80 \times 40$) volume with a scaling factor of 5. 
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_fl_DR_random.png}
-\caption{Delivery Rate for flooding algorithm with inaccurate destination location in a random distribution of nodes.}
+\caption{Delivery Rate for flooding algorithm with inaccurate destination location in a random distribution of nodes}
 \label{fig:mob_fl_DR_random}
 \end{figure}
 
-\fref{fig:mob_fl_DR_random} depicts a plot of delivery ratio for flooding algorithm, whereas \fref{fig:mob_pe_DR_random} depicts a plot fo delivery ratio for petal routing. We can notice that for large HTL ($> 4$) and petal width ($> 35\%$) the delivery rate for both the algorithms are comparable. However an interesting point to note is that the delivery rate with diverged transmission zones scheme is better for smaller petal widths. This validates our motivation for diverged transmission zone as presented in Section \ref{diverged_trans_zone}.
+\fref{fig:mob_fl_DR_random} depicts a plot of delivery rate for flooding algorithm, whereas \fref{fig:mob_pe_DR_random} depicts a plot fo delivery rate for petal routing. We can notice that for large HTL ($> 4$) and petal width ($> 35\%$) the delivery rate for both the algorithms are comparable. However an interesting point to note is that the delivery rate with diverged transmission zones scheme is better for smaller petal widths. This validates our motivation for diverged transmission zone as presented in Section \ref{diverged_trans_zone}.
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_DR_random.png}
-\caption{Delivery Rate for petal routing with inaccurate destination location.}
+\caption{Delivery Rate for petal routing with inaccurate destination location in a random distribution of nodes}
 \label{fig:mob_pe_DR_random}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_hops_random.png}
-\caption{Average number of hops for petal routing with inaccurate destination location.}
+\caption{Average number of hops for petal routing with inaccurate destination location}
 \label{fig:mob_pe_hops_random}
 \end{figure}
 
@@ -333,23 +271,15 @@ In this section we shall study the effect of node mobility on the previously stu
 
 \begin{figure}[hbtp]
 \centering
-\includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_delay_random.png}
-\caption{End-to-end delay for petal routing with inaccurate destination location.}
-\label{fig:mob_pe_delay_random}
-\end{figure}
-
-
-\begin{figure}[hbtp]
-\centering
 \includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_fl_trans_random.png}
-\caption{Average number of tries per successful transmission for flooding algorithm with inaccurate destination location.}
+\caption{Average number of transmissions per successful packet delivery for flooding algorithm with inaccurate destination location}
 \label{fig:mob_fl_trans_random}
 \end{figure}
 
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=\simResultFigSize\textwidth]{ncsuthesis-0.6/Chapter-5/figs/mob_pe_trans_random.png}
-\caption{Average number of tries per successful transmission for petal routing with inaccurate destination location.}
+\caption{Average number of transmissions per successful packet delivery for petal routing with inaccurate destination location}
 \label{fig:mob_pe_trans_random}
 \end{figure}
 

@@ -21,7 +21,7 @@ A detailed description of the problem and a multi-UAV distributed solution has b
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=0.8\textwidth]{Chapter-3/figs/intermediate_state}
-\caption{UAVs wrapping around the plume. The trailing lines mark the trajectory followed by the UAVs.}
+\caption{UAVs wrapping around the plume. The trailing lines mark the trajectory followed by the UAVs}
 \label{fig:intermediate_state}
 \end{figure}
 
@@ -101,7 +101,7 @@ As we discussed in Chapter \ref{chap-two}, proactively or reactively maintaining
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=0.5\textwidth]{Chapter-3/figs/routing_motivation}
-\caption{Routing protocol motivation. Red and green nodes are closer to the SD lines and hence more relevant for a successful packet delivery.}
+\caption{Routing protocol motivation. Red and green nodes are closer to the SD lines and hence more relevant for a successful packet delivery}
 \label{fig:routing_motivation}
 \end{figure}
 These `transmission zones' can be defined as different shapes, for example a capsule, cuboid or a spheroid \fref{fig:trans_zones_example} and each have their own peculiar properties. In other words our routing scheme is a restricted flooding algorithm that reduces the overhead by restricting the re-transmissions to a volume between the source and destination nodes. 
@@ -109,7 +109,7 @@ These `transmission zones' can be defined as different shapes, for example a cap
 \begin{figure}[hbtp]
 \centering
 \includegraphics[width=0.5\textwidth]{Chapter-3/figs/Zone_examples}
-\caption{Transmission zones to restrict flooding between source and destination.}
+\caption{Transmission zones to restrict flooding between source and destination}
 \label{fig:trans_zones_example}
 \end{figure}
 
@@ -173,6 +173,7 @@ To this extent, following are the assumptions underlying our routing scheme:
 \item The nodes always know their location via GPS. 
 \item The nodes synchronize their clock via GPS.
 \item A source node knows an approximate location of the destination node which is maintained in a location table and provided by a location service. Different implementations of a location service have been mentioned in Section \ref{loc_service} and our implementation has been explained in Section \ref{loc_service_impl}. 
+\item The contention resolution and scheduling issues at the hop time scale are handled by the MAC layer
 \end{enumerate}
 
 In a nut-shell, our routing scheme benefits from the inherently broadcast wireless medium and restricts the re-transmissions to a specific volume around the source - destination line and cancelling out redundant transmissions in the process. This routing scheme is presented in Algorithm \ref{packet_scheduling} and \ref{call_back_handler}. A 2D equivalent of our routing scheme is presented in \cite{6133499} and the routing scheme is termed as `petal routing'. Although, all our references are in 3 dimensions, we shall continue the same nomenclature and refer our 3D routing scheme as `Petal routing'.

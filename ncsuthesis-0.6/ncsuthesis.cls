@@ -425,7 +425,7 @@
             \vfill
        \ncsu@titlepageparagraph
            \vfill
-       \ncsu@program\\[2.5\ncsu@lineheight]
+       \ncsu@program\\[4.5\ncsu@lineheight]
        \ncsu@citystate\\[1\ncsu@lineheight]
        \ncsu@year
            \vfill
